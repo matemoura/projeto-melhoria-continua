@@ -1,0 +1,47 @@
+# ----------------------------------------
+# FRONTEND - Angular
+# ----------------------------------------
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.env
+
+# Editor/IDE
+frontend/.vscode/
+frontend/.idea/
+
+# OS
+frontend/.DS_Store
+
+# ----------------------------------------
+# BACKEND - Java / Spring Boot
+# ----------------------------------------
+backend/target/
+backend/.classpath
+backend/.project
+backend/.settings/
+backend/.env
+
+# Maven
+backend/pom.xml.tag
+backend/pom.xml.releaseBackup
+backend/pom.xml.versionsBackup
+backend/logging.properties
+
+# Gradle (caso use)
+backend/.gradle/
+backend/build/
+
+# IDEs
+backend/.idea/
+backend/.vscode/
+backend/.DS_Store
+
+# ----------------------------------------
+# GERAL
+# ----------------------------------------
+.env
+*.log
+.idea/
+.vscode/
+.DS_Store
