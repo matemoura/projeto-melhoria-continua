@@ -31,6 +31,6 @@ public class User {
     private Profile profile;
 
     @ManyToOne
-    @JoinColumn(name = "sector_id")
+    @JoinColumn(name = "id_sector")
     private Sector sector;
 }

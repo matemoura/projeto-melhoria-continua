@@ -18,7 +18,7 @@ public class Audit {
 
     @ManyToOne
     @JoinColumn(name = "id_user")
-    private User user;
+    private User auditor;
 
     @OneToMany(mappedBy = "audit", cascade = CascadeType.ALL)
     private List<AuditedArea> auditedAreas;
