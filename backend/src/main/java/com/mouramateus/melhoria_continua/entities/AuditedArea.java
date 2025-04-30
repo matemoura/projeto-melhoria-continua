@@ -1,5 +1,6 @@
 package com.mouramateus.melhoria_continua.entities;
 
+import com.mouramateus.melhoria_continua.enums.StatusArea;
 import jakarta.persistence.*;
 import lombok.Data;
 

@@ -15,4 +15,5 @@ public interface MoreIdeasRepository extends JpaRepository<MoreIdeas, Long> {
     List<MoreIdeas> findByStatus(StatusIdea status);
 
     List<MoreIdeas> findByEmailUsuarioAndStatus(String email, String status);
+
 }

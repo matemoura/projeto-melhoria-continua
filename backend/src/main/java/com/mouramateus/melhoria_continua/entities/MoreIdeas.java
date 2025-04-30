@@ -2,10 +2,14 @@ package com.mouramateus.melhoria_continua.entities;
 
 import com.mouramateus.melhoria_continua.enums.StatusIdea;
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Entity
+@Table(name = "tb_moreideas")
+@Data
 public class MoreIdeas {
 
     @Id

@@ -1,9 +1,9 @@
 package com.mouramateus.melhoria_continua.dto;
 
-import com.mouramateus.melhoria_continua.entities.AuditedAreaDTO;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class AuditDTO {
@@ -11,5 +11,5 @@ public class AuditDTO {
     private Long id;
     private LocalDateTime date;
     private String auditorNome;
-    private List<AuditedAreaDTO> areasauditadas;
+    private List<AuditedAreaDTO> areasAuditadas;
 }

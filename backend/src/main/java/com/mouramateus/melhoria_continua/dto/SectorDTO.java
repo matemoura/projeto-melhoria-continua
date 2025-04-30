@@ -6,5 +6,8 @@ import lombok.Data;
 public class SectorDTO {
 
     private Long id;
-    private String nome;
+    private String name;
+
+    public SectorDTO(Long id, String name) {
+    }
 }
