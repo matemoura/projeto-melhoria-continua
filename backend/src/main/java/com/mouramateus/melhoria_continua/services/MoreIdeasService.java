@@ -6,7 +6,12 @@ import com.mouramateus.melhoria_continua.enums.ImpactProblem;
 import com.mouramateus.melhoria_continua.repositories.MoreIdeasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,5 +83,28 @@ public class MoreIdeasService {
         entity.setExpectativaMelhoria(dto.getExpectativaMelhoria());
         entity.setSugestaoNomeKaizen(dto.getSugestaoNomeKaizen());
         return entity;
+    }
+
+    public MoreIdeas salvarComImagem(MoreIdeas maisIdeias, MultipartFile imagem) {
+        if (imagem != null && !imagem.isEmpty()) {
+            String caminho = salvarImagem(imagem, "maisideias");
+            maisIdeias.setImagemPath(caminho);
+        }
+        return moreIdeasRepository.save(maisIdeias);
+    }
+
+    private String salvarImagem(MultipartFile file, String pasta) {
+        try {
+            Path diretorio = Paths.get("uploads/" + pasta);
+            if (!Files.exists(diretorio)) {
+                Files.createDirectories(diretorio);
+            }
+            String nomeArquivo = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            Path caminhoCompleto = diretorio.resolve(nomeArquivo);
+            file.transferTo(caminhoCompleto.toFile());
+            return "/uploads/" + pasta + "/" + nomeArquivo;
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao salvar imagem: " + e.getMessage());
+        }
     }
 }

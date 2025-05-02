@@ -1,5 +1,6 @@
 package com.mouramateus.melhoria_continua.entities;
 
+import com.mouramateus.melhoria_continua.enums.ImpactProblem;
 import com.mouramateus.melhoria_continua.enums.StatusIdea;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -26,10 +27,13 @@ public class MoreIdeas {
 
     private String possiveisSolucoes;
 
-    @ElementCollection
-    @CollectionTable(name = "tb_impactos_ideia", joinColumns = @JoinColumn(name = "tb_mais_ideia_id"))
+    private String imagemPath;
+
+    @ElementCollection(targetClass = ImpactProblem.class)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "tb_impactos_ideia", joinColumns = @JoinColumn(name = "tb_more_idea_id"))
     @Column(name = "impacto")
-    private List<String> impactos;
+    private List<ImpactProblem> impactos;
 
     private String interferenciaAtividades;
 

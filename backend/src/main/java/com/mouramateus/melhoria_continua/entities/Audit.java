@@ -22,4 +22,6 @@ public class Audit {
 
     @OneToMany(mappedBy = "audit", cascade = CascadeType.ALL)
     private List<AuditedArea> auditedAreas;
+
+    private String imagemPath;
 }
