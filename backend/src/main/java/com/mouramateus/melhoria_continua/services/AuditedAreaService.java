@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class AuditedAreaService {
@@ -16,17 +15,40 @@ public class AuditedAreaService {
     @Autowired
     private AuditedAreaRepository auditedAreaRepository;
 
+    public AuditedArea toEntity(AuditedAreaDTO dto) {
+        AuditedArea entity = new AuditedArea();
+        if (dto.getId() != null) {
+            entity.setId(dto.getId());
+        }
+        entity.setNomeArea(dto.getNomeArea());
+        entity.setStatus(dto.getStatusArea());
+        entity.setNotaFinal(dto.getNotaFinal());
+        entity.setImages(dto.getImagens());
+
+        return entity;
+    }
+
+    public AuditedAreaDTO toDTO(AuditedArea entity) {
+        AuditedAreaDTO dto = new AuditedAreaDTO();
+        dto.setId(entity.getId());
+        dto.setNomeArea(entity.getNomeArea());
+        dto.setStatusArea(entity.getStatus());
+        dto.setNotaFinal(entity.getNotaFinal());
+        dto.setImagens(entity.getImages());
+
+        return dto;
+    }
+
     public List<AuditedAreaDTO> findAll() {
-        return auditedAreaRepository.findAll()
-                .stream()
+        return auditedAreaRepository.findAll().stream()
                 .map(this::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public AuditedAreaDTO findById(Long id) {
-        Optional<AuditedArea> entityOpt = auditedAreaRepository.findById(id);
-        return entityOpt.map(this::toDTO)
-                .orElseThrow(() -> new RuntimeException("Área auditada não encontrada"));
+        return auditedAreaRepository.findById(id)
+                .map(this::toDTO)
+                .orElseThrow(() -> new RuntimeException("Área auditada não encontrada com ID: " + id));
     }
 
     public AuditedAreaDTO save(AuditedAreaDTO dto) {
@@ -35,27 +57,25 @@ public class AuditedAreaService {
         return toDTO(saved);
     }
 
-    public void deleteById(Long id) {
+    public AuditedAreaDTO update(Long id, AuditedAreaDTO dto) {
+        Optional<AuditedArea> existingAreaOpt = auditedAreaRepository.findById(id);
+        if (existingAreaOpt.isEmpty()) {
+            throw new RuntimeException("Área auditada não encontrada com ID: " + id);
+        }
+        AuditedArea existingArea = existingAreaOpt.get();
+        existingArea.setNomeArea(dto.getNomeArea());
+        existingArea.setStatus(dto.getStatusArea());
+        existingArea.setNotaFinal(dto.getNotaFinal());
+        existingArea.setImages(dto.getImagens());
+
+        AuditedArea updated = auditedAreaRepository.save(existingArea);
+        return toDTO(updated);
+    }
+
+    public void delete(Long id) {
+        if (!auditedAreaRepository.existsById(id)) {
+            throw new RuntimeException("Área auditada não encontrada com ID: " + id);
+        }
         auditedAreaRepository.deleteById(id);
-    }
-
-    private AuditedAreaDTO toDTO(AuditedArea entity) {
-        AuditedAreaDTO dto = new AuditedAreaDTO();
-        dto.setId(entity.getId());
-        dto.setNomeArea(entity.getNomeArea());
-        dto.setStatusArea(entity.getStatus());
-        dto.setImagens(entity.getImages());
-        dto.setNotaFinal(entity.getNotaFinal());
-        return dto;
-    }
-
-    private AuditedArea toEntity(AuditedAreaDTO dto) {
-        AuditedArea entity = new AuditedArea();
-        entity.setId(dto.getId());
-        entity.setNomeArea(dto.getNomeArea());
-        entity.setStatus(dto.getStatusArea());
-        entity.setImages(dto.getImagens());
-        entity.setNotaFinal(dto.getNotaFinal());
-        return entity;
     }
 }

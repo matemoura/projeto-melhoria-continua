@@ -16,7 +16,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AuditService {
@@ -27,92 +28,129 @@ public class AuditService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<AuditDTO> findAll() {
-        return auditRepository.findAll().stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
-    }
+    @Autowired
+    private AuditedAreaService auditedAreaService;
 
-    public AuditDTO findById(Long id) {
-        return auditRepository.findById(id)
-                .map(this::toDTO)
-                .orElseThrow(() -> new RuntimeException("Auditoria não encontrada"));
-    }
-
-    public AuditDTO save(AuditDTO dto) {
+    private Audit toEntity(AuditDTO dto) {
         Audit entity = new Audit();
-        entity.setAuditDateTime(dto.getDate());
+        if (dto.getId() != null) {
+            entity.setId(dto.getId());
+        }
+        entity.setAuditDateTime(dto.getAuditDateTime());
 
-        User auditor = userRepository.findByNome(dto.getAuditorNome())
-                .orElseThrow(() -> new RuntimeException("Auditor não encontrado"));
-
+        User auditor = userRepository.findByName(dto.getAuditor())
+                .orElseThrow(() -> new RuntimeException("Auditor não encontrado com nome: " + dto.getAuditor()));
         entity.setAuditor(auditor);
 
-        List<AuditedArea> areas = dto.getAreasAuditadas().stream().map(areaDto -> {
-            AuditedArea area = new AuditedArea();
-            area.setNomeArea(areaDto.getNomeArea());
-            area.setStatus(areaDto.getStatusArea());
-            area.setNotaFinal(areaDto.getNotaFinal());
-            area.setImages(areaDto.getImagens());
-            area.setAudit(entity);
-            return area;
-        }).collect(Collectors.toList());
+        if (dto.getAuditedAreas() != null) {
+            List<AuditedArea> areas = dto.getAuditedAreas().stream()
+                    .map(auditedAreaService::toEntity)
+                    .toList();
+            areas.forEach(area -> area.setAudit(entity));
+            entity.setAuditedAreas(areas);
+        }
 
-        entity.setAuditedAreas(areas);
-
-        Audit saved = auditRepository.save(entity);
-        return toDTO(saved);
-    }
-
-    public void deleteById(Long id) {
-        auditRepository.deleteById(id);
+        return entity;
     }
 
     private AuditDTO toDTO(Audit entity) {
         AuditDTO dto = new AuditDTO();
         dto.setId(entity.getId());
-        dto.setDate(entity.getAuditDateTime());
-        dto.setAuditorNome(entity.getAuditor().getName());
+        dto.setAuditDateTime(entity.getAuditDateTime());
+        dto.setAuditor(entity.getAuditor() != null ? entity.getAuditor().getName() : null);
+        if (entity.getAuditedAreas() != null) {
+            List<AuditedAreaDTO> areasDTO = entity.getAuditedAreas().stream()
+                    .map(auditedAreaService::toDTO)
+                    .toList();
+            dto.setAuditedAreas(areasDTO);
+        }
 
-        List<AuditedAreaDTO> areasDTO = entity.getAuditedAreas().stream().map(area -> {
-            AuditedAreaDTO areaDTO = new AuditedAreaDTO();
-            areaDTO.setId(area.getId());
-            areaDTO.setNomeArea(area.getNomeArea());
-            areaDTO.setStatusArea(area.getStatus());
-            areaDTO.setNotaFinal(area.getNotaFinal());
-            areaDTO.setImagens(area.getImages());
-            return areaDTO;
-        }).collect(Collectors.toList());
-
-        dto.setAreasAuditadas(areasDTO);
         return dto;
     }
 
-    public Audit salvarComImagem(Audit auditoria, MultipartFile imagem) {
-        if (imagem != null && !imagem.isEmpty()) {
-            String caminho = salvarImagem(imagem, "auditorias");
-            auditoria.setImagemPath(caminho);
-        }
-        return auditRepository.save(auditoria);
+    public List<AuditDTO> findAll() {
+        return auditRepository.findAll().stream()
+                .map(this::toDTO)
+                .toList();
     }
 
-    private String salvarImagem(MultipartFile file, String pasta) {
+    public AuditDTO findById(Long id) {
+        return auditRepository.findById(id)
+                .map(this::toDTO)
+                .orElseThrow(() -> new RuntimeException("Auditoria não encontrada com ID: " + id));
+    }
+
+    public AuditDTO save(AuditDTO dto, MultipartFile imagem) {
+        Audit entity = toEntity(dto);
+
+        if (imagem != null && !imagem.isEmpty()) {
+            String imagePath = saveImage(imagem, "auditorias");
+            entity.setImagemPath(imagePath);
+        }
+
+        Audit saved = auditRepository.save(entity);
+        return toDTO(saved);
+    }
+
+    public AuditDTO save(AuditDTO dto) {
+        Audit entity = toEntity(dto);
+        Audit saved = auditRepository.save(entity);
+        return toDTO(saved);
+    }
+
+    public AuditDTO update(Long id, AuditDTO dto, MultipartFile imagem) {
+        Optional<Audit> existingAuditOpt = auditRepository.findById(id);
+        if (existingAuditOpt.isEmpty()) {
+            throw new RuntimeException("Auditoria não encontrada com ID: " + id);
+        }
+
+        Audit existingAudit = existingAuditOpt.get();
+        existingAudit.setAuditDateTime(dto.getAuditDateTime());
+
+        User auditor = userRepository.findByName(dto.getAuditor())
+                .orElseThrow(() -> new RuntimeException("Auditor não encontrado com nome: " + dto.getAuditor()));
+        existingAudit.setAuditor(auditor);
+
+        if (dto.getAuditedAreas() != null) {
+            List<AuditedArea> updatedAreas = dto.getAuditedAreas().stream()
+                    .map(auditedAreaService::toEntity)
+                    .toList();
+            updatedAreas.forEach(area -> area.setAudit(existingAudit));
+            existingAudit.setAuditedAreas(updatedAreas);
+        } else {
+            existingAudit.setAuditedAreas(null);
+        }
+
+        if (imagem != null && !imagem.isEmpty()) {
+            String imagePath = saveImage(imagem, "auditorias");
+            existingAudit.setImagemPath(imagePath);
+        } else if (dto.getImagemPath() == null || dto.getImagemPath().isEmpty()) {
+            existingAudit.setImagemPath(null);
+        }
+
+        Audit updated = auditRepository.save(existingAudit);
+        return toDTO(updated);
+    }
+
+    public void delete(Long id) {
+        if (!auditRepository.existsById(id)) {
+            throw new RuntimeException("Auditoria não encontrada com ID: " + id);
+        }
+        auditRepository.deleteById(id);
+    }
+
+    private String saveImage(MultipartFile file, String folder) {
         try {
-            Path diretorio = Paths.get("uploads/" + pasta);
-            if (!Files.exists(diretorio)) {
-                Files.createDirectories(diretorio);
+            Path directory = Paths.get("uploads/" + folder);
+            if (!Files.exists(directory)) {
+                Files.createDirectories(directory);
             }
-            String nomeArquivo = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            Path caminhoCompleto = diretorio.resolve(nomeArquivo);
-            file.transferTo(caminhoCompleto.toFile());
-            return "/uploads/" + pasta + "/" + nomeArquivo;
+            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            Path filePath = directory.resolve(fileName);
+            Files.copy(file.getInputStream(), filePath);
+            return "/uploads/" + folder + "/" + fileName;
         } catch (IOException e) {
             throw new RuntimeException("Erro ao salvar imagem: " + e.getMessage());
         }
-    }
-
-    public User buscarAuditorPorNome(String nome) {
-        return userRepository.findByNome(nome)
-                .orElseThrow(() -> new RuntimeException("Auditor não encontrado"));
     }
 }

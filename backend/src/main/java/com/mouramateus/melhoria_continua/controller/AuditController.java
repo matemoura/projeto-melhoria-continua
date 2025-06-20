@@ -1,9 +1,6 @@
 package com.mouramateus.melhoria_continua.controller;
 
 import com.mouramateus.melhoria_continua.dto.AuditDTO;
-import com.mouramateus.melhoria_continua.entities.Audit;
-import com.mouramateus.melhoria_continua.entities.AuditedArea;
-import com.mouramateus.melhoria_continua.entities.User;
 import com.mouramateus.melhoria_continua.services.AuditService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,38 +34,15 @@ public class AuditController {
 
     @DeleteMapping("/{id}")
     public void removerAudit(@PathVariable Long id) {
-        auditService.deleteById(id);
+        auditService.delete(id);
     }
 
     @PostMapping("/criar")
-    public ResponseEntity<Audit> criarAuditoria(
+    public ResponseEntity<AuditDTO> criarAuditoria(
             @RequestPart("formulario") AuditDTO dto,
             @RequestPart(value = "imagem", required = false) MultipartFile imagem) {
 
-        Audit auditoria = converterParaEntidade(dto);
-        Audit salva = auditService.salvarComImagem(auditoria, imagem);
-        return ResponseEntity.ok(salva);
-    }
-
-    private Audit converterParaEntidade(AuditDTO dto) {
-        Audit entity = new Audit();
-        entity.setAuditDateTime(dto.getDate());
-
-        User auditor = auditService.buscarAuditorPorNome(dto.getAuditorNome());
-        entity.setAuditor(auditor);
-
-        List<AuditedArea> areas = dto.getAreasAuditadas().stream().map(areaDto -> {
-            AuditedArea area = new AuditedArea();
-            area.setNomeArea(areaDto.getNomeArea());
-            area.setStatus(areaDto.getStatusArea());
-            area.setNotaFinal(areaDto.getNotaFinal());
-            area.setImages(areaDto.getImagens());
-            area.setAudit(entity);
-            return area;
-        }).toList();
-
-        entity.setAuditedAreas(areas);
-
-        return entity;
+        AuditDTO salvaDTO = auditService.save(dto, imagem);
+        return ResponseEntity.ok(salvaDTO);
     }
 }

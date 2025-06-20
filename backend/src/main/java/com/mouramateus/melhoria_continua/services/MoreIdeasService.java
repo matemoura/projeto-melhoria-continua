@@ -2,7 +2,7 @@ package com.mouramateus.melhoria_continua.services;
 
 import com.mouramateus.melhoria_continua.dto.MoreIdeasDTO;
 import com.mouramateus.melhoria_continua.entities.MoreIdeas;
-import com.mouramateus.melhoria_continua.enums.ImpactProblem;
+import com.mouramateus.melhoria_continua.mapper.MoreIdeasMapper;
 import com.mouramateus.melhoria_continua.repositories.MoreIdeasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,8 +12,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class MoreIdeasService {
@@ -23,86 +25,81 @@ public class MoreIdeasService {
 
     public List<MoreIdeasDTO> findAll() {
         return moreIdeasRepository.findAll().stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+                .map(MoreIdeasMapper::toDTO)
+                .toList();
     }
 
     public MoreIdeasDTO findById(Long id) {
         return moreIdeasRepository.findById(id)
-                .map(this::toDTO)
-                .orElseThrow(() -> new RuntimeException("Ideia não encontrada"));
+                .map(MoreIdeasMapper::toDTO)
+                .orElseThrow(() -> new RuntimeException("Ideia de melhoria não encontrada com ID: " + id));
     }
 
-    public MoreIdeasDTO save(MoreIdeasDTO dto) {
-        MoreIdeas entity = toEntity(dto);
-        return toDTO(moreIdeasRepository.save(entity));
+    public MoreIdeasDTO save(MoreIdeasDTO dto, MultipartFile imagem) {
+        MoreIdeas entity = MoreIdeasMapper.toEntity(dto);
+
+        if (entity.getDataHoraEnvio() == null) {
+            entity.setDataHoraEnvio(LocalDateTime.now());
+        }
+        if (entity.getStatus() == null) {
+            entity.setStatus(com.mouramateus.melhoria_continua.enums.StatusIdea.ENVIADO);
+        }
+
+        if (imagem != null && !imagem.isEmpty()) {
+            String imagePath = saveImage(imagem, "moreideas");
+            entity.setImagemPath(imagePath);
+        }
+
+        MoreIdeas saved = moreIdeasRepository.save(entity);
+        return MoreIdeasMapper.toDTO(saved);
+    }
+
+    public MoreIdeasDTO update(Long id, MoreIdeasDTO dto, MultipartFile imagem) {
+        Optional<MoreIdeas> existingIdeaOpt = moreIdeasRepository.findById(id);
+        if (existingIdeaOpt.isEmpty()) {
+            throw new RuntimeException("Ideia de melhoria não encontrada com ID: " + id);
+        }
+
+        MoreIdeas existingIdea = existingIdeaOpt.get();
+
+        existingIdea.setNomeUsuario(dto.getNomeUsuario());
+        existingIdea.setEmailUsuario(dto.getEmailUsuario());
+        existingIdea.setSetor(dto.getSetor());
+        existingIdea.setDescricaoProblema(dto.getDescricaoProblema());
+        existingIdea.setPossiveisSolucoes(dto.getPossiveisSolucoes());
+        existingIdea.setImpactos(dto.getImpactos());
+        existingIdea.setInterferenciaAtividades(dto.getInterferenciaAtividades());
+        existingIdea.setExpectativaMelhoria(dto.getExpectativaMelhoria());
+        existingIdea.setSugestaoNomeKaizen(dto.getSugestaoNomeKaizen());
+
+        if (imagem != null && !imagem.isEmpty()) {
+            String imagePath = saveImage(imagem, "moreideas");
+            existingIdea.setImagemPath(imagePath);
+        } else if (dto.getImagemPath() == null || dto.getImagemPath().isEmpty()) {
+            existingIdea.setImagemPath(null);
+        }
+
+        MoreIdeas updated = moreIdeasRepository.save(existingIdea);
+        return MoreIdeasMapper.toDTO(updated);
     }
 
     public void delete(Long id) {
+        if (!moreIdeasRepository.existsById(id)) {
+            throw new RuntimeException("Ideia de melhoria não encontrada com ID: " + id);
+        }
         moreIdeasRepository.deleteById(id);
     }
 
-    private MoreIdeasDTO toDTO(MoreIdeas entity) {
-        MoreIdeasDTO dto = new MoreIdeasDTO();
-        dto.setId(entity.getId());
-        dto.setNomeUsuario(entity.getNomeUsuario());
-        dto.setEmailUsuario(entity.getEmailUsuario());
-        dto.setSetor(entity.getSetor());
-        dto.setDescricaoProblema(entity.getDescricaoProblema());
-        dto.setPossiveisSolucoes(entity.getPossiveisSolucoes());
-
-        dto.setImpactos(
-                entity.getImpactos().stream()
-                        .map(ImpactProblem::valueOf)
-                        .collect(Collectors.toList())
-        );
-
-        dto.setInterferenciaAtividades(entity.getInterferenciaAtividades());
-        dto.setExpectativaMelhoria(entity.getExpectativaMelhoria());
-        dto.setSugestaoNomeKaizen(entity.getSugestaoNomeKaizen());
-        return dto;
-    }
-
-
-    private MoreIdeas toEntity(MoreIdeasDTO dto) {
-        MoreIdeas entity = new MoreIdeas();
-        entity.setId(dto.getId());
-        entity.setNomeUsuario(dto.getNomeUsuario());
-        entity.setEmailUsuario(dto.getEmailUsuario());
-        entity.setSetor(dto.getSetor());
-        entity.setDescricaoProblema(dto.getDescricaoProblema());
-        entity.setPossiveisSolucoes(dto.getPossiveisSolucoes());
-
-        entity.setImpactos(
-                dto.getImpactos().stream()
-                        .map(Enum::name)
-                        .collect(Collectors.toList())
-        );
-
-        entity.setInterferenciaAtividades(dto.getInterferenciaAtividades());
-        entity.setExpectativaMelhoria(dto.getExpectativaMelhoria());
-        entity.setSugestaoNomeKaizen(dto.getSugestaoNomeKaizen());
-        return entity;
-    }
-
-    public MoreIdeas salvarComImagem(MoreIdeas maisIdeias, MultipartFile imagem) {
-        if (imagem != null && !imagem.isEmpty()) {
-            String caminho = salvarImagem(imagem, "maisideias");
-            maisIdeias.setImagemPath(caminho);
-        }
-        return moreIdeasRepository.save(maisIdeias);
-    }
-
-    private String salvarImagem(MultipartFile file, String pasta) {
+    private String saveImage(MultipartFile file, String folder) {
         try {
-            Path diretorio = Paths.get("uploads/" + pasta);
-            if (!Files.exists(diretorio)) {
-                Files.createDirectories(diretorio);
+            Path directory = Paths.get("uploads/" + folder);
+            if (!Files.exists(directory)) {
+                Files.createDirectories(directory);
             }
-            String nomeArquivo = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            Path caminhoCompleto = diretorio.resolve(nomeArquivo);
-            file.transferTo(caminhoCompleto.toFile());
-            return "/uploads/" + pasta + "/" + nomeArquivo;
+            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            Path filePath = directory.resolve(fileName);
+            Files.copy(file.getInputStream(), filePath);
+            return "/uploads/" + folder + "/" + fileName;
         } catch (IOException e) {
             throw new RuntimeException("Erro ao salvar imagem: " + e.getMessage());
         }

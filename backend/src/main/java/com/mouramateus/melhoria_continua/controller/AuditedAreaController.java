@@ -1,7 +1,6 @@
 package com.mouramateus.melhoria_continua.controller;
 
 import com.mouramateus.melhoria_continua.dto.AuditedAreaDTO;
-import com.mouramateus.melhoria_continua.repositories.AuditedAreaRepository;
 import com.mouramateus.melhoria_continua.services.AuditedAreaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +32,6 @@ public class AuditedAreaController {
 
     @DeleteMapping("/{id}")
     public void deletarAuditedAreaPorId(@PathVariable Long id) {
-        auditedAreaService.deleteById(id);
+        auditedAreaService.delete(id);
     }
 }

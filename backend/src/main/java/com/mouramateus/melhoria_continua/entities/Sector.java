@@ -1,7 +1,6 @@
 package com.mouramateus.melhoria_continua.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "tb_sectors")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Sector {
 
     @Id
@@ -18,4 +16,25 @@ public class Sector {
 
     @Column(nullable = false, unique = true)
     private String name;
+
+    public Sector(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

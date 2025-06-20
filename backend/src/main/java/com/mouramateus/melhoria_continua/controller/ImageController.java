@@ -1,6 +1,6 @@
 package com.mouramateus.melhoria_continua.controller;
 
-import jakarta.annotation.Resource;
+import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ import java.nio.file.Paths;
 @RequestMapping("/api/image")
 public class ImageController {
 
-    @Value("${upload.dir}")
+    @Value("${file.upload-dir}")
     private String uploadDir;
 
     @PostMapping("/moreideas/upload")

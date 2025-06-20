@@ -48,23 +48,23 @@ public class UserService {
     private UserDTO convertToDTO(User user) {
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
-        dto.setNome(user.getName());
+        dto.setName(user.getName());
         dto.setEmail(user.getEmail());
         dto.setProfile(user.getProfile());
-        dto.setSetorNome(user.getSector() != null ? user.getSector().getName() : null);
+        dto.setSectorName(user.getSector() != null ? user.getSector().getName() : null);
         return dto;
     }
 
     private User convertToEntity(UserDTO dto) {
         User user = new User();
         user.setId(dto.getId());
-        user.setName(dto.getNome());
+        user.setName(dto.getName());
         user.setEmail(dto.getEmail());
         user.setProfile(dto.getProfile());
 
-        if (dto.getSetorNome() != null && !dto.getSetorNome().isEmpty()) {
-            Sector sector = sectorRepository.findByName(dto.getSetorNome())
-                    .orElseThrow(() -> new RuntimeException("Setor não encontrado: " + dto.getSetorNome()));
+        if (dto.getSectorName() != null && !dto.getSectorName().isEmpty()) {
+            Sector sector = sectorRepository.findByName(dto.getSectorName())
+                    .orElseThrow(() -> new RuntimeException("Setor não encontrado: " + dto.getSectorName()));
             user.setSector(sector);
         }
         return user;
