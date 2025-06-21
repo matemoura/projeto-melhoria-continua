@@ -1,1 +1,12 @@
-<p>audit-ranking works!</p>
+<h3>Ranking das Auditorias 5S</h3>
+
+<div>
+  <button (click)="onTipoRankingChange('total')">Ver Ranking Total</button>
+  <button (click)="onTipoRankingChange('latest')">Ver Última Auditoria</button>
+</div>
+
+<ul>
+  <li *ngFor="let area of ranking">
+    <strong>{{ area.nomeArea }}</strong> - {{ area.pontuacao }} pontos
+  </li>
+</ul>

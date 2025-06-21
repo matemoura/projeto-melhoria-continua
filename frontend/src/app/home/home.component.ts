@@ -11,8 +11,8 @@ import { RouterLink } from '@angular/router';
       <ul>
         <li><a routerLink="/more-ideas/new">Enviar Nova Ideia</a></li>
         <li><a routerLink="/more-ideas/list">Ver Ideias</a></li>
-        <li><a routerLink="/5s/new">Realizar Auditoria 5S</a></li>
-        <li><a routerLink="/5s/ranking">Ver Ranking 5S</a></li>
+        <li><a routerLink="/audit/new">Realizar Auditoria 5S</a></li>
+        <li><a routerLink="/audit/ranking">Ver Ranking 5S</a></li>
       </ul>
     </nav>
   `,

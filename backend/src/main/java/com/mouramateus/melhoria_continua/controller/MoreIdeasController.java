@@ -1,7 +1,6 @@
 package com.mouramateus.melhoria_continua.controller;
 
 import com.mouramateus.melhoria_continua.dto.MoreIdeasDTO;
-import com.mouramateus.melhoria_continua.mapper.MoreIdeasMapper;
 import com.mouramateus.melhoria_continua.services.MoreIdeasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
