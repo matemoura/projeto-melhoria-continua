@@ -1,1 +1,41 @@
-<p>more-ideas-form works!</p>
+<h3>Enviar Nova Ideia</h3>
+<form [formGroup]="ideaForm" (ngSubmit)="onSubmit()">
+  <div class="form-group">
+    <label for="nomeUsuario">Seu Nome:</label>
+    <input id="nomeUsuario" formControlName="nomeUsuario" type="text">
+    <div *ngIf="ideaForm.get('nomeUsuario')?.invalid && ideaForm.get('nomeUsuario')?.touched">
+      Nome é obrigatório.
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="emailUsuario">Seu Email:</label>
+    <input id="emailUsuario" formControlName="emailUsuario" type="email">
+    <div *ngIf="ideaForm.get('emailUsuario')?.invalid && ideaForm.get('emailUsuario')?.touched">
+      Email válido é obrigatório.
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="setor">Setor:</label>
+    <input id="setor" formControlName="setor" type="text">
+    <div *ngIf="ideaForm.get('setor')?.invalid && ideaForm.get('setor')?.touched">
+      Setor é obrigatório.
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="descricaoProblema">Descrição do Problema:</label>
+    <textarea id="descricaoProblema" formControlName="descricaoProblema"></textarea>
+    <div *ngIf="ideaForm.get('descricaoProblema')?.invalid && ideaForm.get('descricaoProblema')?.touched">
+      Descrição do problema é obrigatória.
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="imagem">Enviar Imagem:</label>
+    <input type="file" id="imagem" (change)="onFileSelected($event)">
+  </div>
+
+  <button type="submit" [disabled]="!ideaForm.valid">Enviar Ideia</button>
+</form>
