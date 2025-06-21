@@ -13,6 +13,24 @@ import { HttpClient } from '@angular/common/http';
 export class MoreIdeasFormComponent implements OnInit {
   ideaForm: FormGroup;
 
+  impactosDisponiveis: string[] = [
+    'PRODUTIVIDADE',
+    'MARGEM',
+    'CUSTO',
+    'SEGURANCA',
+    'MEIO_AMBIENTE',
+    'ERGONOMIA',
+    'TEMPO',
+    'PRODUCAO_EM_EXCESSO',
+    'ESPERA',
+    'TRANSPORTE',
+    'PROCESSAMENTO_EM_EXCESSO',
+    'ESTOQUE',
+    'MOVIMENTACAO_EM_EXCESSO',
+    'RETRABALHO',
+    'INTELECTO'
+  ];
+
   constructor(private fb: FormBuilder) {
     this.ideaForm = this.fb.group({
       nomeUsuario: ['', Validators.required],

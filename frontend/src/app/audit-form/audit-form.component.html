@@ -1,1 +1,32 @@
-<p>audit-form works!</p>
+<h3>Nova Auditoria 5S</h3>
+
+<form [formGroup]="auditForm" (ngSubmit)="onSubmit()">
+
+  <div class="form-group">
+    <label for="auditor">Nome do Auditor:</label>
+    <input id="auditor" formControlName="auditor" type="text" required>
+  </div>
+
+  <div formArrayName="auditedAreas">
+    <h4>Áreas Auditadas:</h4>
+    <div *ngFor="let area of auditedAreas.controls; let i=index" [formGroupName]="i">
+      <label>Área:</label>
+      <input formControlName="areaName" type="text" placeholder="Nome da área">
+
+      <label>Pontuação:</label>
+      <input formControlName="score" type="number" min="0" max="100">
+      <hr>
+    </div>
+  </div>
+  <button type="button" (click)="addAuditedArea()">Adicionar Área Auditada</button>
+
+  <div class="form-group">
+    <label for="imagem">Imagem da Auditoria:</label>
+    <input type="file" id="imagem" (change)="onFileSelected($event)">
+  </div>
+
+  <input type="hidden" formControlName="auditDateTime">
+
+  <button type="submit" [disabled]="!auditForm.valid">Enviar Auditoria</button>
+
+</form>
