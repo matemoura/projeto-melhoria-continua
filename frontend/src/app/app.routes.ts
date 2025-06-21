@@ -9,7 +9,7 @@ export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'more-ideas/new', component: MoreIdeasFormComponent },
   { path: 'more-ideas/list', component: MoreIdeasListComponent },
-  { path: '5s/new', component: AuditFormComponent },
-  { path: '5s/ranking', component: AuditRankingComponent },
+  { path: 'audit/new', component: AuditFormComponent },
+  { path: 'audit/ranking', component: AuditRankingComponent },
   { path: '**', redirectTo: '' } 
 ];
