@@ -10,7 +10,7 @@ import { MoreIdeasFormComponent } from './more-ideas-form/more-ideas-form.compon
 import { MoreIdeasListComponent } from './more-ideas-list/more-ideas-list.component';
 import { AuditFormComponent } from './audit-form/audit-form.component';
 import { AuditRankingComponent } from './audit-ranking/audit-ranking.component';
-import { appRoutes } from './app.routes';
+import { routes } from './app.routes';
 
 @NgModule({
   declarations: [
@@ -25,7 +25,7 @@ import { appRoutes } from './app.routes';
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(routes)
   ],
   providers: [],
   bootstrap: [AppComponent]

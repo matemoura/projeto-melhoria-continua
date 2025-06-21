@@ -1,12 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; 
-import { HttpClient } from '@angular/common/http'; 
-
-interface MoreIdea {
-  id: number;
-  nomeUsuario: string;
-  descricaoProblema: string;
-}
+import { CommonModule } from '@angular/common';
+import { MoreIdeasService, MoreIdea } from '../services/more-ideas.service';
 
 @Component({
   selector: 'app-more-ideas-list',
@@ -17,20 +11,28 @@ interface MoreIdea {
 })
 export class MoreIdeasListComponent implements OnInit {
   ideas: MoreIdea[] = [];
+  isLoading = true;
+  loadError = '';
 
-  constructor(private http: HttpClient) { }
+  constructor(private moreIdeasService: MoreIdeasService) {}
 
   ngOnInit(): void {
-    this.fetchIdeas();
+    this.loadIdeas();
   }
 
-  fetchIdeas() {
-    this.http.get<MoreIdea[]>('/api/more-ideas').subscribe({
+  loadIdeas() {
+    this.isLoading = true;
+    this.loadError = '';
+
+    this.moreIdeasService.getAllIdeas().subscribe({
       next: (data) => {
         this.ideas = data;
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Erro ao buscar ideias:', err);
+        this.loadError = 'Erro ao carregar as ideias. Tente novamente mais tarde.';
+        this.isLoading = false;
       }
     });
   }
