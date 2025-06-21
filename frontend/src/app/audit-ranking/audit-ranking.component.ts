@@ -13,6 +13,7 @@ import { HttpClientModule } from '@angular/common/http';
 export class AuditRankingComponent implements OnInit {
   ranking: AreaRanking[] = [];
   tipoRanking: 'total' | 'latest' = 'total';
+  loading = false;
 
   constructor(private rankingService: AuditRankingService) {}
 
@@ -21,17 +22,23 @@ export class AuditRankingComponent implements OnInit {
   }
 
   loadRanking() {
-    if (this.tipoRanking === 'total') {
-      this.rankingService.getTotalRanking().subscribe({
-        next: (data) => this.ranking = data,
-        error: (err) => console.error('Erro ao carregar ranking total', err)
-      });
-    } else {
-      this.rankingService.getLatestAuditRanking().subscribe({
-        next: (data) => this.ranking = data,
-        error: (err) => console.error('Erro ao carregar ranking da última auditoria', err)
-      });
-    }
+    this.loading = true;
+    this.ranking = [];
+
+    const observable = this.tipoRanking === 'total' ?
+      this.rankingService.getTotalRanking() :
+      this.rankingService.getLatestAuditRanking();
+
+    observable.subscribe({
+      next: (data) => {
+        this.ranking = data;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar ranking:', err);
+        this.loading = false;
+      }
+    });
   }
 
   onTipoRankingChange(tipo: 'total' | 'latest') {

@@ -1,12 +1,24 @@
-<h3>Ranking das Auditorias 5S</h3>
+<h2>🏆 Ranking das Auditorias 5S</h2>
 
-<div>
-  <button (click)="onTipoRankingChange('total')">Ver Ranking Total</button>
-  <button (click)="onTipoRankingChange('latest')">Ver Última Auditoria</button>
+<div class="button-group">
+  <button [class.active]="tipoRanking === 'total'" (click)="onTipoRankingChange('total')">
+    Ver Ranking Total
+  </button>
+  <button [class.active]="tipoRanking === 'latest'" (click)="onTipoRankingChange('latest')">
+    Ver Última Auditoria
+  </button>
 </div>
 
-<ul>
-  <li *ngFor="let area of ranking">
-    <strong>{{ area.nomeArea }}</strong> - {{ area.pontuacao }} pontos
+<div *ngIf="loading" class="spinner">Carregando...</div>
+
+<div *ngIf="!loading && ranking.length === 0" class="empty-message">
+  Nenhum ranking disponível.
+</div>
+
+<ul *ngIf="!loading && ranking.length > 0" class="ranking-list">
+  <li *ngFor="let area of ranking; index as i">
+    <span class="position">{{ i + 1 }}º</span>
+    <span class="area">{{ area.nomeArea }}</span>
+    <span class="score">{{ area.pontuacao }} pontos</span>
   </li>
 </ul>
