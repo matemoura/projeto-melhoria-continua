@@ -1,4 +1,5 @@
 <h3>Enviar Nova Ideia</h3>
+
 <form [formGroup]="ideaForm" (ngSubmit)="onSubmit()">
   <div class="form-group">
     <label for="nomeUsuario">Seu Nome:</label>
@@ -30,6 +31,33 @@
     <div *ngIf="ideaForm.get('descricaoProblema')?.invalid && ideaForm.get('descricaoProblema')?.touched">
       Descrição do problema é obrigatória.
     </div>
+  </div>
+
+  <div class="form-group">
+    <label for="possiveisSolucoes">Possíveis Soluções:</label>
+    <textarea id="possiveisSolucoes" formControlName="possiveisSolucoes"></textarea>
+  </div>
+
+  <div class="form-group">
+  <label for="impactos">Impactos:</label>
+  <select id="impactos" formControlName="impactos" multiple>
+    <option *ngFor="let impacto of impactosDisponiveis" [value]="impacto">{{ impacto }}</option>
+  </select>
+</div>
+
+  <div class="form-group">
+    <label for="interferenciaAtividades">Interferência nas Atividades:</label>
+    <textarea id="interferenciaAtividades" formControlName="interferenciaAtividades"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="expectativaMelhoria">Expectativa de Melhoria:</label>
+    <textarea id="expectativaMelhoria" formControlName="expectativaMelhoria"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="sugestaoNomeKaizen">Sugestão de Nome para o Kaizen:</label>
+    <input id="sugestaoNomeKaizen" formControlName="sugestaoNomeKaizen" type="text">
   </div>
 
   <div class="form-group">
