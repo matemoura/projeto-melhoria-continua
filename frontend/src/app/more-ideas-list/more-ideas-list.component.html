@@ -1,1 +1,7 @@
-<p>more-ideas-list works!</p>
+<h3>Ideias Enviadas</h3>
+<div *ngIf="ideas.length === 0">Nenhuma ideia enviada ainda.</div>
+<ul>
+  <li *ngFor="let idea of ideas">
+    <strong>{{ idea.nomeUsuario }}</strong>: {{ idea.descricaoProblema }}
+    </li>
+</ul>
