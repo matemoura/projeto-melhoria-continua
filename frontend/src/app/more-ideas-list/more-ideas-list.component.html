@@ -1,26 +1,34 @@
-<h3>Ideias Enviadas</h3>
+<h2>💡 Ideias Enviadas</h2>
 
-<div *ngIf="isLoading">Carregando ideias...</div>
+<div *ngIf="isLoading" class="spinner">
+  Carregando ideias...
+</div>
 
-<div *ngIf="loadError">{{ loadError }}</div>
+<div *ngIf="loadError" class="error-message">
+  {{ loadError }}
+</div>
 
-<div *ngIf="!isLoading && ideas.length === 0">Nenhuma ideia enviada ainda.</div>
+<div *ngIf="!isLoading && ideas.length === 0" class="empty-message">
+  Nenhuma ideia enviada ainda.
+</div>
 
-<ul *ngIf="!isLoading && ideas.length > 0">
+<ul *ngIf="!isLoading && ideas.length > 0" class="idea-list">
   <li *ngFor="let idea of ideas">
-    <strong>{{ idea.nomeUsuario }}</strong> ({{ idea.emailUsuario }}) - Setor: {{ idea.setor }}<br>
-    <em>{{ idea.descricaoProblema }}</em><br>
+    <h3>{{ idea.nomeUsuario }} ({{ idea.emailUsuario }})</h3>
+    <p><strong>Setor:</strong> {{ idea.setor }}</p>
+    <p><strong>Descrição:</strong> {{ idea.descricaoProblema }}</p>
 
     <div *ngIf="idea.possiveisSolucoes">
-      <strong>Soluções:</strong> {{ idea.possiveisSolucoes }}
+      <p><strong>Soluções:</strong> {{ idea.possiveisSolucoes }}</p>
     </div>
 
     <div *ngIf="idea.impactos && idea.impactos.length > 0">
-      <strong>Impactos:</strong> {{ idea.impactos.join(', ') }}
+      <p><strong>Impactos:</strong> {{ idea.impactos.join(', ') }}</p>
     </div>
 
     <div *ngIf="idea.imagemUrl">
-      <img [src]="idea.imagemUrl" alt="Imagem da Ideia" width="200">
+      <p><strong>Imagem:</strong></p>
+      <img [src]="idea.imagemUrl" alt="Imagem da Ideia" width="250">
     </div>
 
     <hr>

@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MoreIdeasService, MoreIdea } from '../services/more-ideas.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-more-ideas-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HttpClientModule],
   templateUrl: './more-ideas-list.component.html',
   styleUrls: ['./more-ideas-list.component.css']
 })
