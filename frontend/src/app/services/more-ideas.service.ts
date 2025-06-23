@@ -2,6 +2,18 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export interface IdeaFormData {
+  name: string;
+  email: string;
+  department: string;
+  problemDescription: string;
+  possibleSolutions: string;
+  impacts: string[];
+  interference: number;
+  expectedImprovement: number;
+  kaizenNameSuggestion?: string;
+}
+
 export interface MoreIdea {
   id: number;
   nomeUsuario: string;
@@ -10,7 +22,7 @@ export interface MoreIdea {
   descricaoProblema: string;
   possiveisSolucoes?: string;
   impactos?: string[];
-  imagemUrl?: string;
+  imageUrl?: string;
 }
 
 @Injectable({
@@ -22,5 +34,9 @@ export class MoreIdeasService {
 
   getAllIdeas(): Observable<MoreIdea[]> {
     return this.http.get<MoreIdea[]>(this.apiUrl);
+  }
+
+  submitIdea(formData: FormData): Observable<any> {
+    return this.http.post<any>(this.apiUrl, formData);
   }
 }

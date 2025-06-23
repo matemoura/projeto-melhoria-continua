@@ -1,76 +1,94 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { MoreIdeasService } from '../services/more-ideas.service';
 
 @Component({
   selector: 'app-more-ideas-form',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './more-ideas-form.component.html',
-  styleUrls: ['./more-ideas-form.component.css']
+  styleUrl: './more-ideas-form.component.css'
 })
 export class MoreIdeasFormComponent implements OnInit {
-  ideaForm: FormGroup;
+  ideaForm!: FormGroup;
+  selectedFile: File | null = null;
 
-  impactosDisponiveis: string[] = [
-    'PRODUTIVIDADE',
-    'MARGEM',
-    'CUSTO',
-    'SEGURANCA',
-    'MEIO_AMBIENTE',
-    'ERGONOMIA',
-    'TEMPO',
-    'PRODUCAO_EM_EXCESSO',
-    'ESPERA',
-    'TRANSPORTE',
-    'PROCESSAMENTO_EM_EXCESSO',
-    'ESTOQUE',
-    'MOVIMENTACAO_EM_EXCESSO',
-    'RETRABALHO',
-    'INTELECTO'
+  availableImpacts: string[] = [
+    'Redução de Custos',
+    'Aumento de Produtividade',
+    'Melhora da Qualidade',
+    'Redução de Desperdício',
+    'Segurança',
+    'Meio Ambiente',
+    'Satisfação do Cliente',
+    'Melhora do Clima Organizacional',
+    'Otimização de Tempo',
+    'Outros'
   ];
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private moreIdeasService: MoreIdeasService) { }
+
+  ngOnInit(): void {
     this.ideaForm = this.fb.group({
-      nomeUsuario: ['', Validators.required],
-      emailUsuario: ['', [Validators.required, Validators.email]],
-      setor: ['', Validators.required],
-      descricaoProblema: ['', Validators.required],
-      possiveisSolucoes: [''],
-      impactos: [[]], 
-      interferenciaAtividades: [''],
-      expectativaMelhoria: [''],
-      sugestaoNomeKaizen: [''],
-      imagem: [null] 
+      name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      department: ['', Validators.required],
+      problemDescription: ['', Validators.required],
+      possibleSolutions: ['', Validators.required],
+      impacts: [[], Validators.required],
+      interference: [null, [Validators.required, Validators.min(0), Validators.max(10)]],
+      expectedImprovement: [null, [Validators.required, Validators.min(0), Validators.max(10)]],
+      kaizenNameSuggestion: ['']
     });
   }
 
-  ngOnInit(): void {}
-
-  onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      this.ideaForm.patchValue({
-        imagem: file
-      });
-      this.ideaForm.get('imagem')?.updateValueAndValidity();
+  onFileSelected(event: Event): void {
+    const element = event.currentTarget as HTMLInputElement;
+    let fileList: FileList | null = element.files;
+    if (fileList && fileList.length > 0) {
+      this.selectedFile = fileList[0];
+    } else {
+      this.selectedFile = null;
     }
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (this.ideaForm.valid) {
       const formData = new FormData();
-      formData.append('dto', JSON.stringify(this.ideaForm.value));
-      if (this.ideaForm.get('imagem')?.value) {
-        formData.append('imagem', this.ideaForm.get('imagem')?.value);
+      
+      Object.keys(this.ideaForm.value).forEach(key => {
+        const value = this.ideaForm.value[key];
+        
+        if (key === 'impacts' && Array.isArray(value)) {
+          formData.append(key, value.join(','));
+        } else {
+          formData.append(key, value);
+        }
+      });
+
+      if (this.selectedFile) {
+        formData.append('image', this.selectedFile, this.selectedFile.name);
       }
 
-      console.log('Formulário Enviado!', this.ideaForm.value);
-      alert('Ideia enviada! (Verifique o console para os dados)');
+      console.log('Dados do formulário para envio (FormData):', formData);
+
+      this.moreIdeasService.submitIdea(formData).subscribe({
+        next: (response) => {
+          console.log('Ideia enviada com sucesso!', response);
+          alert('Ideia enviada com sucesso!');
+          this.ideaForm.reset();
+          this.selectedFile = null;
+        },
+        error: (error) => {
+          console.error('Erro ao enviar ideia:', error);
+          alert('Erro ao enviar ideia. Verifique o console para mais detalhes.');
+        }
+      });
+
     } else {
       alert('Por favor, preencha todos os campos obrigatórios corretamente.');
+      this.ideaForm.markAllAsTouched();
     }
   }
 }
