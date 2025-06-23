@@ -26,9 +26,9 @@
       <p><strong>Impactos:</strong> {{ idea.impactos.join(', ') }}</p>
     </div>
 
-    <div *ngIf="idea.imagemUrl">
+    <div *ngIf="idea.imageUrl">
       <p><strong>Imagem:</strong></p>
-      <img [src]="idea.imagemUrl" alt="Imagem da Ideia" width="250">
+      <img [src]="idea.imageUrl" alt="Imagem da Ideia" width="250">
     </div>
 
     <hr>

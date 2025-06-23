@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { AuditRankingService, AreaRanking } from '../services/audit-ranking.service';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-audit-ranking',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule],
   templateUrl: './audit-ranking.component.html',
   styleUrls: ['./audit-ranking.component.css']
 })
