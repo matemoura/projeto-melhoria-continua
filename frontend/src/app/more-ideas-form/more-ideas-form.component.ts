@@ -27,7 +27,10 @@ export class MoreIdeasFormComponent implements OnInit {
     'Outros'
   ];
 
-  constructor(private fb: FormBuilder, private moreIdeasService: MoreIdeasService) { }
+  constructor(
+    private fb: FormBuilder,
+    private moreIdeasService: MoreIdeasService
+  ) {}
 
   ngOnInit(): void {
     this.ideaForm = this.fb.group({
@@ -43,35 +46,46 @@ export class MoreIdeasFormComponent implements OnInit {
     });
   }
 
+  onCheckboxChange(event: Event): void {
+    const checkbox = event.target as HTMLInputElement;
+    const impactsArray: string[] = this.ideaForm.value.impacts;
+
+    if (checkbox.checked) {
+      if (!impactsArray.includes(checkbox.value)) {
+        impactsArray.push(checkbox.value);
+      }
+    } else {
+      const index = impactsArray.indexOf(checkbox.value);
+      if (index !== -1) {
+        impactsArray.splice(index, 1);
+      }
+    }
+
+    this.ideaForm.patchValue({ impacts: impactsArray });
+    this.ideaForm.get('impacts')?.updateValueAndValidity();
+  }
+
   onFileSelected(event: Event): void {
     const element = event.currentTarget as HTMLInputElement;
-    let fileList: FileList | null = element.files;
-    if (fileList && fileList.length > 0) {
-      this.selectedFile = fileList[0];
-    } else {
-      this.selectedFile = null;
-    }
+    const fileList: FileList | null = element.files;
+    this.selectedFile = fileList && fileList.length > 0 ? fileList[0] : null;
   }
 
   onSubmit(): void {
     if (this.ideaForm.valid) {
       const formData = new FormData();
-      
-      Object.keys(this.ideaForm.value).forEach(key => {
-        const value = this.ideaForm.value[key];
-        
+
+      Object.entries(this.ideaForm.value).forEach(([key, value]) => {
         if (key === 'impacts' && Array.isArray(value)) {
           formData.append(key, value.join(','));
-        } else {
-          formData.append(key, value);
+        } else if (value !== null && value !== undefined) {
+          formData.append(key, value.toString());
         }
       });
 
       if (this.selectedFile) {
         formData.append('image', this.selectedFile, this.selectedFile.name);
       }
-
-      console.log('Dados do formulário para envio (FormData):', formData);
 
       this.moreIdeasService.submitIdea(formData).subscribe({
         next: (response) => {

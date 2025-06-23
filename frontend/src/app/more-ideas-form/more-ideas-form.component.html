@@ -42,11 +42,17 @@
     </div>
   </div>
 
-  <div class="form-group">
-    <label for="impacts">Impactos (selecione um ou mais):</label>
-    <select id="impacts" formControlName="impacts" multiple>
-      <option *ngFor="let impact of availableImpacts" [value]="impact">{{ impact }}</option>
-    </select>
+  <div class="form-group checkbox-group">
+    <label class="form-label">Impactos (selecione um ou mais):</label>
+    <div *ngFor="let impact of availableImpacts" class="checkbox-item">
+      <input
+        type="checkbox"
+        [value]="impact"
+        (change)="onCheckboxChange($event)"
+        [checked]="ideaForm.value.impacts.includes(impact)"
+      />
+      <span>{{ impact }}</span>
+    </div>
     <div *ngIf="ideaForm.get('impacts')?.invalid && (ideaForm.get('impacts')?.dirty || ideaForm.get('impacts')?.touched)" class="error-message">
       <div *ngIf="ideaForm.get('impacts')?.errors?.['required']">Selecione pelo menos um impacto.</div>
     </div>
