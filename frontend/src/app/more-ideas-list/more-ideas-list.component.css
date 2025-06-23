@@ -1,23 +1,22 @@
 h2 {
   text-align: center;
   margin-bottom: 20px;
+  color: #333;
 }
 
-.spinner {
+.spinner, .error-message, .empty-message {
   text-align: center;
   font-style: italic;
+  margin-top: 20px;
 }
 
 .error-message {
-  text-align: center;
   color: red;
   font-weight: bold;
 }
 
 .empty-message {
-  text-align: center;
   color: gray;
-  font-style: italic;
 }
 
 .idea-list {
@@ -32,10 +31,38 @@ h2 {
   border: 1px solid #ddd;
   margin-bottom: 15px;
   padding: 15px;
-  border-radius: 5px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.idea-list h3 {
+  color: #007bff;
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.3em;
+}
+
+.idea-list p {
+  margin-bottom: 5px;
+  line-height: 1.5;
+  color: #555;
+}
+
+.idea-list p strong {
+  color: #333;
 }
 
 .idea-list img {
-  margin-top: 10px;
+  margin-top: 15px;
   border-radius: 5px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+hr {
+  border: none;
+  border-top: 1px dashed #eee;
+  margin: 20px 0;
 }

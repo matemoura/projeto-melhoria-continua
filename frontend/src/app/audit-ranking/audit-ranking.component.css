@@ -1,6 +1,7 @@
 h2 {
   text-align: center;
   margin-bottom: 20px;
+  color: #333;
 }
 
 .button-group {
@@ -9,33 +10,32 @@ h2 {
 }
 
 .button-group button {
-  margin: 0 5px;
-  padding: 8px 16px;
-  border: none;
-  background-color: #e0e0e0;
+  margin: 0 8px;
+  padding: 10px 20px;
+  border: 1px solid #007bff;
+  background-color: #fff;
+  color: #007bff;
   cursor: pointer;
   border-radius: 5px;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  font-size: 1em;
 }
 
 .button-group button.active {
-  background-color: #4caf50;
+  background-color: #007bff;
   color: white;
+  border-color: #007bff;
 }
 
-.button-group button:hover {
-  background-color: #a5d6a7;
+.button-group button:hover:not(.active) {
+  background-color: #e9f5ff;
 }
 
-.spinner {
+.spinner, .empty-message {
   text-align: center;
   font-style: italic;
-}
-
-.empty-message {
-  text-align: center;
-  color: gray;
-  font-style: italic;
+  color: #666;
+  margin-top: 20px;
 }
 
 .ranking-list {
@@ -48,24 +48,32 @@ h2 {
 .ranking-list li {
   background-color: #f9f9f9;
   border: 1px solid #ddd;
-  margin-bottom: 8px;
-  padding: 10px;
+  margin-bottom: 10px;
+  padding: 15px;
   border-radius: 5px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  font-size: 1.1em;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .position {
   font-weight: bold;
+  color: #007bff;
+  width: 40px;
+  text-align: right;
+  margin-right: 10px;
 }
 
 .area {
   flex-grow: 1;
   text-align: left;
-  margin-left: 10px;
+  color: #333;
 }
 
 .score {
   font-weight: bold;
-  color: #333;
+  color: #28a745;
+  white-space: nowrap;
 }
