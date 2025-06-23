@@ -1,0 +1,46 @@
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+section {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+section h2 {
+  color: #0056b3;
+  margin-top: 0;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.home-links {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.button {
+  display: inline-block;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+.section-margin-top {
+  margin-top: 20px;
+}
