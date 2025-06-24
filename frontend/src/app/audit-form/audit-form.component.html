@@ -4,20 +4,30 @@
 
   <div class="form-group">
     <label for="auditor">Nome do Auditor:</label>
-    <input id="auditor" formControlName="auditor" type="text" required>
+    <input id="auditor" formControlName="auditor" type="text" required readonly>
   </div>
 
   <div formArrayName="auditedAreas">
     <h4>Áreas Auditadas:</h4>
-    <div *ngFor="let area of auditedAreas.controls; let i=index" [formGroupName]="i">
+    <div *ngFor="let area of auditedAreas.controls; let i = index" [formGroupName]="i">
+      
       <label>Área:</label>
-      <input formControlName="areaName" type="text" placeholder="Nome da área">
+      <input formControlName="nomeArea" type="text" placeholder="Nome da área">
 
       <label>Pontuação:</label>
-      <input formControlName="score" type="number" min="0" max="100">
+      <input formControlName="notaFinal" type="number" min="0" max="100">
+
+      <label>Status:</label>
+      <select formControlName="statusArea">
+        <option value="PENDENTE">Pendente</option>
+        <option value="EM_ANALISE">Em Análise</option>
+        <option value="CONCLUIDO">Concluído</option>
+      </select>
+
       <hr>
     </div>
   </div>
+
   <button type="button" (click)="addAuditedArea()">Adicionar Área Auditada</button>
 
   <div class="form-group">

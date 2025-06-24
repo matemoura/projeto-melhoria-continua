@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuditService } from '../services/audit.service';
+import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-audit-form',
@@ -13,13 +15,22 @@ import { AuditService } from '../services/audit.service';
 export class AuditFormComponent {
   auditForm: FormGroup;
   selectedFile: File | null = null;
+  private fb = inject(FormBuilder);
+  private auditService = inject(AuditService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
-  constructor(private fb: FormBuilder, private auditService: AuditService) {
+  constructor() {
     this.auditForm = this.fb.group({
-      auditor: ['', Validators.required],              
-      auditedAreas: this.fb.array([]),                 
-      auditDateTime: [new Date().toISOString(), Validators.required]  
+      auditor: ['', Validators.required],
+      auditedAreas: this.fb.array([]),
+      auditDateTime: [new Date().toISOString(), Validators.required]
     });
+
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      this.auditForm.patchValue({ auditor: currentUser.name });
+    }
   }
 
   get auditedAreas(): FormArray {
@@ -29,8 +40,10 @@ export class AuditFormComponent {
   addAuditedArea() {
     this.auditedAreas.push(
       this.fb.group({
-        areaName: ['', Validators.required],
-        score: [0, [Validators.required, Validators.min(0), Validators.max(100)]]
+        nomeArea: ['', Validators.required],
+        notaFinal: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
+        statusArea: ['PENDENTE'],
+        imagens: [[]]
       })
     );
   }
@@ -44,8 +57,16 @@ export class AuditFormComponent {
 
   onSubmit() {
     if (this.auditForm.valid) {
+      const formValue = this.auditForm.value;
+
+      // Atualiza status para EM_ANALISE antes de enviar
+      formValue.auditedAreas = formValue.auditedAreas.map((area: any) => ({
+        ...area,
+        statusArea: 'EM_ANALISE'
+      }));
+
       const formData = new FormData();
-      formData.append('dto', JSON.stringify(this.auditForm.value));
+      formData.append('formulario', JSON.stringify(formValue));
 
       if (this.selectedFile) {
         formData.append('imagem', this.selectedFile);
@@ -53,12 +74,12 @@ export class AuditFormComponent {
 
       this.auditService.submitAudit(formData).subscribe({
         next: (response) => {
-          console.log('Auditoria enviada com sucesso!', response);
           alert('Auditoria enviada com sucesso!');
+          this.router.navigate(['/']);
         },
         error: (error) => {
-          console.error('Erro ao enviar auditoria:', error);
           alert('Erro ao enviar auditoria.');
+          console.error(error);
         }
       });
     } else {
