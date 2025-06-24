@@ -1,12 +1,23 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent { }
+export class HomeComponent {
+  authService = inject(AuthService);
+
+  constructor() {
+    this.authService.refreshLoginStatus();
+  }
+
+  get isLoggedIn(): boolean {
+    return this.authService.isAuthenticated();
+  }
+}

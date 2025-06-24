@@ -1,7 +1,5 @@
 package com.mouramateus.melhoria_continua.config;
 
-import com.mouramateus.melhoria_continua.config.JwtAuthenticationFilter;
-import com.mouramateus.melhoria_continua.security.UserDetailsServiceImpl;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;

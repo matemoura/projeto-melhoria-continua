@@ -59,7 +59,6 @@ export class AuditFormComponent {
     if (this.auditForm.valid) {
       const formValue = this.auditForm.value;
 
-      // Atualiza status para EM_ANALISE antes de enviar
       formValue.auditedAreas = formValue.auditedAreas.map((area: any) => ({
         ...area,
         statusArea: 'EM_ANALISE'
@@ -73,11 +72,11 @@ export class AuditFormComponent {
       }
 
       this.auditService.submitAudit(formData).subscribe({
-        next: (response) => {
+        next: (response: any) => {
           alert('Auditoria enviada com sucesso!');
           this.router.navigate(['/']);
         },
-        error: (error) => {
+        error: (error: any) => {
           alert('Erro ao enviar auditoria.');
           console.error(error);
         }

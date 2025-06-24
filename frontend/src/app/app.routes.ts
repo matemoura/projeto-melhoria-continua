@@ -4,9 +4,11 @@ import { MoreIdeasListComponent } from './more-ideas-list/more-ideas-list.compon
 import { AuditFormComponent } from './audit-form/audit-form.component';
 import { AuditRankingComponent } from './audit-ranking/audit-ranking.component';
 import { HomeComponent } from './home/home.component';
+import { LoginComponent } from './login/login.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
+  { path: 'login', component: LoginComponent },
   { path: 'more-ideas/new', component: MoreIdeasFormComponent },
   { path: 'more-ideas/list', component: MoreIdeasListComponent },
   { path: 'audit/new', component: AuditFormComponent },
