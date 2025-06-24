@@ -45,4 +45,10 @@ public class AuditController {
         AuditDTO salvaDTO = auditService.save(dto, imagem);
         return ResponseEntity.ok(salvaDTO);
     }
+
+    @PutMapping("/{id}/approve")
+    public ResponseEntity<AuditDTO> aprovarAuditoria(@PathVariable Long id) {
+        AuditDTO auditAprovada = auditService.approveAudit(id);
+        return ResponseEntity.ok(auditAprovada);
+    }
 }

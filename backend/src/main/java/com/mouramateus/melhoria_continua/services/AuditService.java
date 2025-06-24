@@ -5,6 +5,7 @@ import com.mouramateus.melhoria_continua.dto.AuditedAreaDTO;
 import com.mouramateus.melhoria_continua.entities.Audit;
 import com.mouramateus.melhoria_continua.entities.AuditedArea;
 import com.mouramateus.melhoria_continua.entities.User;
+import com.mouramateus.melhoria_continua.enums.StatusArea;
 import com.mouramateus.melhoria_continua.repositories.AuditRepository;
 import com.mouramateus.melhoria_continua.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +84,10 @@ public class AuditService {
     public AuditDTO save(AuditDTO dto, MultipartFile imagem) {
         Audit entity = toEntity(dto);
 
+        if (entity.getAuditedAreas() != null) {
+            entity.getAuditedAreas().forEach(area -> area.setStatus(StatusArea.PENDENTE));
+        }
+
         if (imagem != null && !imagem.isEmpty()) {
             String imagePath = saveImage(imagem, "auditorias");
             entity.setImagemPath(imagePath);
@@ -94,6 +99,11 @@ public class AuditService {
 
     public AuditDTO save(AuditDTO dto) {
         Audit entity = toEntity(dto);
+
+        if (entity.getAuditedAreas() != null) {
+            entity.getAuditedAreas().forEach(area -> area.setStatus(StatusArea.PENDENTE));
+        }
+
         Audit saved = auditRepository.save(entity);
         return toDTO(saved);
     }
@@ -152,5 +162,17 @@ public class AuditService {
         } catch (IOException e) {
             throw new RuntimeException("Erro ao salvar imagem: " + e.getMessage());
         }
+    }
+
+    public AuditDTO approveAudit(Long id) {
+        Audit audit = auditRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Auditoria não encontrada com ID: " + id));
+
+        if (audit.getAuditedAreas() != null) {
+            audit.getAuditedAreas().forEach(area -> area.setStatus(StatusArea.CONCLUIDO));
+        }
+
+        Audit updated = auditRepository.save(audit);
+        return toDTO(updated);
     }
 }
