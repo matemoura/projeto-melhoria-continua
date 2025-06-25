@@ -4,25 +4,45 @@
 
   <div class="form-group">
     <label for="auditor">Nome do Auditor:</label>
-    <input id="auditor" formControlName="auditor" type="text" required readonly>
+    <input id="auditor" formControlName="auditor" type="text" required>
   </div>
 
   <div formArrayName="auditedAreas">
     <h4>Áreas Auditadas:</h4>
-    <div *ngFor="let area of auditedAreas.controls; let i = index" [formGroupName]="i">
+    <div *ngFor="let area of auditedAreas.controls; let i = index" [formGroupName]="i" class="area-auditada">
       
       <label>Área:</label>
       <input formControlName="nomeArea" type="text" placeholder="Nome da área">
 
-      <label>Pontuação:</label>
-      <input formControlName="notaFinal" type="number" min="0" max="100">
+      <div class="form-group">
+        <label for="seiri">Seiri (Senso de Utilização):</label>
+        <input formControlName="seiri" type="number" min="0" max="10">
+      </div>
 
-      <label>Status:</label>
-      <select formControlName="statusArea">
-        <option value="PENDENTE">Pendente</option>
-        <option value="EM_ANALISE">Em Análise</option>
-        <option value="CONCLUIDO">Concluído</option>
-      </select>
+      <div class="form-group">
+        <label for="seiton">Seiton (Senso de Organização):</label>
+        <input formControlName="seiton" type="number" min="0" max="10">
+      </div>
+
+      <div class="form-group">
+        <label for="seiso">Seisō (Senso de Limpeza):</label>
+        <input formControlName="seiso" type="number" min="0" max="10">
+      </div>
+
+      <div class="form-group">
+        <label for="seiketsu">Seiketsu (Senso de Padronização):</label>
+        <input formControlName="seiketsu" type="number" min="0" max="10">
+      </div>
+
+      <div class="form-group">
+        <label for="shitsuke">Shitsuke (Senso de Disciplina):</label>
+        <input formControlName="shitsuke" type="number" min="0" max="10">
+      </div>
+
+      <div class="form-group">
+        <label for="notaFinal">Pontuação Final:</label>
+        <input formControlName="notaFinal" type="number" min="0" max="100">
+      </div>
 
       <hr>
     </div>

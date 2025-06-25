@@ -1,38 +1,27 @@
 package com.mouramateus.melhoria_continua.entities;
 
-import com.mouramateus.melhoria_continua.enums.Profile;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "tb_user")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "users")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
     private String name;
-
-    @Column(unique = true, nullable = false)
     private String email;
-
-    @Column(nullable = false)
     private String password;
+    private String profile;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Profile profile;
+    public User() {
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "id_sector")
-    private Sector sector;
+    public User(String name, String email, String password, String profile) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.profile = profile;
+    }
 
     public Long getId() {
         return id;
@@ -66,19 +55,11 @@ public class User {
         this.password = password;
     }
 
-    public Profile getProfile() {
+    public String getProfile() {
         return profile;
     }
 
-    public void setProfile(Profile profile) {
+    public void setProfile(String profile) {
         this.profile = profile;
-    }
-
-    public Sector getSector() {
-        return sector;
-    }
-
-    public void setSector(Sector sector) {
-        this.sector = sector;
     }
 }

@@ -1,12 +1,21 @@
 <div class="login-container">
   <form [formGroup]="form" (ngSubmit)="submit()">
-    <h2>Login</h2>
+    <h2 *ngIf="isLoginMode">Login</h2>
+    <h2 *ngIf="!isLoginMode">Cadastro</h2>
 
     <div>
       <label>Email</label>
       <input type="email" formControlName="email" />
       <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
         Email inválido
+      </div>
+    </div>
+
+    <div *ngIf="!isLoginMode">
+      <label>Nome</label>
+      <input type="text" formControlName="name" />
+      <div *ngIf="form.get('name')?.invalid && form.get('name')?.touched">
+        Nome é obrigatório
       </div>
     </div>
 
@@ -18,8 +27,16 @@
       </div>
     </div>
 
-    <button type="submit" [disabled]="loading || form.invalid">Entrar</button>
+    <button type="submit" [disabled]="loading || form.invalid">
+      {{ isLoginMode ? 'Entrar' : 'Cadastrar' }}
+    </button>
 
     <div *ngIf="error" class="error">{{ error }}</div>
+
+    <div class="switch-mode">
+      <a href="#" (click)="toggleMode($event)">
+        {{ isLoginMode ? 'Não tem conta? Cadastre-se' : 'Já tem conta? Faça login' }}
+      </a>
+    </div>
   </form>
 </div>

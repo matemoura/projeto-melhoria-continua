@@ -5,7 +5,7 @@ h3 {
 }
 
 form {
-  max-width: 700px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #e0e0e0;
@@ -26,12 +26,14 @@ form {
 }
 
 .form-group input[type="text"],
-.form-group input[type="number"] {
-  width: calc(100% - 22px);
+.form-group input[type="number"],
+.form-group input[type="file"] {
+  width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1em;
+  box-sizing: border-box;
 }
 
 h4 {
@@ -42,27 +44,43 @@ h4 {
 
 .audited-area-group {
   border: 1px dashed #e0e0e0;
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  background-color: #f9f9f9;
 }
 
-.audited-area-group label {
-  display: inline-block;
-  width: 100px; 
-  margin-right: 10px;
-  text-align: right;
+.audited-area-group .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
 }
 
-.audited-area-group input {
-  width: calc(100% - 120px);
-  display: inline-block;
+.audited-area-group .form-group label {
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.audited-area-group .form-group input {
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  .audited-area-group .form-group-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .audited-area-group .form-group {
+    flex: 1 1 45%;
+  }
 }
 
 hr {
   border: none;
   border-top: 1px solid #eee;
-  margin: 15px 0;
+  margin: 20px 0;
 }
 
 button[type="button"] {

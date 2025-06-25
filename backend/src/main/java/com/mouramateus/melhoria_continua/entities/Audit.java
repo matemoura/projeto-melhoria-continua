@@ -1,31 +1,30 @@
 package com.mouramateus.melhoria_continua.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 public class Audit {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private String auditor;
     private LocalDateTime auditDateTime;
+    private String imageUrl;
 
-    @ManyToOne
-    @JoinColumn(name = "id_user")
-    private User auditor;
-
-    @OneToMany(mappedBy = "audit", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "audit_id")
     private List<AuditedArea> auditedAreas;
 
-    private String imagemPath;
+    public Audit() {
+    }
+
+    public Audit(String auditor, LocalDateTime auditDateTime, String imageUrl) {
+        this.auditor = auditor;
+        this.auditDateTime = auditDateTime;
+        this.imageUrl = imageUrl;
+    }
 
     public Long getId() {
         return id;
@@ -33,6 +32,14 @@ public class Audit {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getAuditor() {
+        return auditor;
+    }
+
+    public void setAuditor(String auditor) {
+        this.auditor = auditor;
     }
 
     public LocalDateTime getAuditDateTime() {
@@ -43,12 +50,12 @@ public class Audit {
         this.auditDateTime = auditDateTime;
     }
 
-    public User getAuditor() {
-        return auditor;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setAuditor(User auditor) {
-        this.auditor = auditor;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public List<AuditedArea> getAuditedAreas() {
@@ -57,13 +64,5 @@ public class Audit {
 
     public void setAuditedAreas(List<AuditedArea> auditedAreas) {
         this.auditedAreas = auditedAreas;
-    }
-
-    public String getImagemPath() {
-        return imagemPath;
-    }
-
-    public void setImagemPath(String imagemPath) {
-        this.imagemPath = imagemPath;
     }
 }

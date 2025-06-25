@@ -7,6 +7,12 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface RegisterRequest {
+  name: string;
+  email: string;
+  password: string;
+}
+
 export interface LoginResponse {
   token: string;
   name: string;
@@ -17,14 +23,20 @@ export interface LoginResponse {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
-  private readonly API_URL = '/api/auth/login';
-  private readonly tokenKey = 'token';
+  private readonly API_BASE_URL = 'http://localhost:8080/api';
+  private readonly LOGIN_URL = `${this.API_BASE_URL}/auth/login`;
+  private readonly REGISTER_URL = `${this.API_BASE_URL}/auth/register`;
+  private readonly tokenKey = 'token';
 
   private _isLoggedIn$ = new BehaviorSubject<boolean>(this.isAuthenticated());
   isLoggedIn$ = this._isLoggedIn$.asObservable();
 
   login(data: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(this.API_URL, data);
+    return this.http.post<LoginResponse>(this.LOGIN_URL, data);
+  }
+
+  register(data: RegisterRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(this.REGISTER_URL, data);
   }
 
   saveToken(token: string): void {

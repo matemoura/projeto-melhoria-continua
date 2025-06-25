@@ -41,6 +41,11 @@ export class AuditFormComponent {
     this.auditedAreas.push(
       this.fb.group({
         nomeArea: ['', Validators.required],
+        seiri: [0, [Validators.required, Validators.min(0), Validators.max(10)]],
+        seiton: [0, [Validators.required, Validators.min(0), Validators.max(10)]],
+        seiso: [0, [Validators.required, Validators.min(0), Validators.max(10)]],
+        seiketsu: [0, [Validators.required, Validators.min(0), Validators.max(10)]],
+        shitsuke: [0, [Validators.required, Validators.min(0), Validators.max(10)]],
         notaFinal: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
         statusArea: ['PENDENTE'],
         imagens: [[]]

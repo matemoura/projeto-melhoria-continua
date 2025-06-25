@@ -1,8 +1,10 @@
 package com.mouramateus.melhoria_continua.controller;
 
-import com.mouramateus.melhoria_continua.dto.MoreIdeasDTO;
-import com.mouramateus.melhoria_continua.services.MoreIdeasService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mouramateus.melhoria_continua.entities.MoreIdea;
+import com.mouramateus.melhoria_continua.services.MoreIdeaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,31 +13,46 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/more-ideas")
+@CrossOrigin(origins = "http://localhost:4200")
 public class MoreIdeasController {
 
     @Autowired
-    public MoreIdeasService service;
+    private MoreIdeaService moreIdeaService;
 
-    @PostMapping
-    public MoreIdeasDTO criarIdeia(@RequestBody MoreIdeasDTO dto,
-                                   @RequestPart(value = "imagem", required = false) MultipartFile imagem) throws IOException {
-        MoreIdeasDTO salvaDTO = service.save(dto, imagem);
-        return salvaDTO;
-
-    }
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @GetMapping
-    public List<MoreIdeasDTO> listarIdeas() {
-        return service.findAll();
+    public ResponseEntity<List<MoreIdea>> getAllIdeas() {
+        List<MoreIdea> ideas = moreIdeaService.getAllIdeas();
+        return ResponseEntity.ok(ideas);
     }
 
-    @GetMapping("/{id}")
-    public MoreIdeasDTO buscarPorId(@PathVariable Long id) {
-        return service.findById(id);
-    }
+    @PostMapping
+    public ResponseEntity<MoreIdea> submitIdea(
+            @RequestParam("name") String name,
+            @RequestParam("email") String email,
+            @RequestParam("department") String department,
+            @RequestParam("problemDescription") String problemDescription,
+            @RequestParam("possibleSolutions") String possibleSolutions,
+            @RequestParam("impacts") String impacts,
+            @RequestParam("interference") Integer interference,
+            @RequestParam("expectedImprovement") Integer expectedImprovement,
+            @RequestParam(value = "kaizenNameSuggestion", required = false) String kaizenNameSuggestion,
+            @RequestParam(value = "image", required = false) MultipartFile imageFile) throws IOException {
 
-    @DeleteMapping("/{id}")
-    public void excluirIdea(@PathVariable Long id) {
-        service.delete(id);
+        MoreIdea idea = new MoreIdea();
+        idea.setNomeUsuario(name);
+        idea.setEmailUsuario(email);
+        idea.setSetor(department);
+        idea.setDescricaoProblema(problemDescription);
+        idea.setPossiveisSolucoes(possibleSolutions);
+        idea.setImpactos(List.of(impacts.split(",")));
+        idea.setInterference(interference);
+        idea.setExpectedImprovement(expectedImprovement);
+        idea.setKaizenNameSuggestion(kaizenNameSuggestion);
+
+        MoreIdea savedIdea = moreIdeaService.submitIdea(idea, imageFile);
+        return ResponseEntity.ok(savedIdea);
     }
 }
