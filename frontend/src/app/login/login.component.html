@@ -1,41 +1,43 @@
 <div class="login-container">
-  <form [formGroup]="form" (ngSubmit)="submit()">
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
     <h2 *ngIf="isLoginMode">Login</h2>
     <h2 *ngIf="!isLoginMode">Cadastro</h2>
 
-    <div>
-      <label>Email</label>
-      <input type="email" formControlName="email" />
-      <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
-        Email inválido
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" placeholder="seuemail@exemplo.com">
+      <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="error-message">
+        <span *ngIf="form.get('email')?.errors?.['required']">O email é obrigatório.</span>
+        <span *ngIf="form.get('email')?.errors?.['email']">Por favor, insira um email válido.</span>
       </div>
     </div>
 
-    <div *ngIf="!isLoginMode">
-      <label>Nome</label>
-      <input type="text" formControlName="name" />
-      <div *ngIf="form.get('name')?.invalid && form.get('name')?.touched">
-        Nome é obrigatório
+    <div class="form-group" *ngIf="!isLoginMode">
+      <label for="name">Nome</label>
+      <input id="name" type="text" formControlName="name" placeholder="Seu nome completo">
+      <div *ngIf="form.get('name')?.invalid && form.get('name')?.touched" class="error-message">
+        O nome é obrigatório.
       </div>
     </div>
 
-    <div>
-      <label>Senha</label>
-      <input type="password" formControlName="password" />
-      <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched">
-        A senha é obrigatória
+    <div class="form-group">
+      <label for="password">Senha</label>
+      <input id="password" type="password" formControlName="password" placeholder="Sua senha">
+      <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="error-message">
+        A senha é obrigatória.
       </div>
     </div>
 
-    <button type="submit" [disabled]="loading || form.invalid">
-      {{ isLoginMode ? 'Entrar' : 'Cadastrar' }}
+    <button type="submit" [disabled]="loading || form.invalid" class="login-button button">
+      <span *ngIf="!loading">{{ isLoginMode ? 'Entrar' : 'Cadastrar' }}</span>
+      <span *ngIf="loading">Aguarde...</span>
     </button>
 
-    <div *ngIf="error" class="error">{{ error }}</div>
+    <div *ngIf="error" class="server-error-message">{{ error }}</div>
 
     <div class="switch-mode">
       <a href="#" (click)="toggleMode($event)">
-        {{ isLoginMode ? 'Não tem conta? Cadastre-se' : 'Já tem conta? Faça login' }}
+        {{ isLoginMode ? 'Não tem uma conta? Cadastre-se' : 'Já tem uma conta? Faça login' }}
       </a>
     </div>
   </form>

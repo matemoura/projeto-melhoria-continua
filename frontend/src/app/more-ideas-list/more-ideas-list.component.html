@@ -1,54 +1,74 @@
-<h2>💡 Ideias Enviadas</h2>
+<div class="list-container">
+  <div class="list-header">
+    <h2>💡 Ideias Enviadas</h2>
+    <p>Visualize todas as sugestões de melhoria registradas na plataforma.</p>
+  </div>
 
-<div *ngIf="isLoading" class="spinner">
-  Carregando ideias...
-</div>
+  <div *ngIf="isLoading" class="spinner">Carregando ideias...</div>
+  <div *ngIf="loadError" class="error-message">{{ loadError }}</div>
+  <div *ngIf="!isLoading && ideas.length === 0" class="empty-message">
+    Nenhuma ideia foi enviada ainda. Seja o primeiro!
+  </div>
 
-<div *ngIf="loadError" class="error-message">
-  {{ loadError }}
-</div>
+  <div *ngIf="!isLoading && ideas.length > 0" class="idea-grid">
+    <div *ngFor="let idea of ideas" class="idea-card">
+      <div class="idea-card-header">
+        <div class="user-info">
+          <span class="user-avatar">👤</span>
+          <div>
+            <h3 class="user-name">{{ idea.nomeUsuario || 'Anônimo' }}</h3>
+            <p class="user-sector">{{ idea.setor }}</p>
+          </div>
+        </div>
+      </div>
 
-<div *ngIf="!isLoading && ideas.length === 0" class="empty-message">
-  Nenhuma ideia enviada ainda.
-</div>
+      <div class="idea-card-body">
+        <div class="info-group">
+          <strong>Descrição do Problema:</strong>
+          <p>{{ idea.descricaoProblema }}</p>
+        </div>
 
-<ul *ngIf="!isLoading && ideas.length > 0" class="idea-list">
-  <li *ngFor="let idea of ideas">
-    <h3>{{ idea.nomeUsuario || 'Anônimo' }} ({{ idea.emailUsuario || 'E-mail não informado' }})</h3>
+        <div class="info-group" *ngIf="idea.possiveisSolucoes">
+          <strong>Possíveis Soluções:</strong>
+          <p>{{ idea.possiveisSolucoes }}</p>
+        </div>
 
-    <p><strong>Setor:</strong> {{ idea.setor }}</p>
-    <p><strong>Descrição do Problema:</strong> {{ idea.descricaoProblema }}</p>
-    <p *ngIf="idea.possiveisSolucoes"><strong>Possíveis Soluções:</strong> {{ idea.possiveisSolucoes }}</p>
+        <div class="info-group" *ngIf="idea.impactos?.length">
+          <strong>Impactos:</strong>
+          <p class="impact-tags">
+            <span *ngFor="let impacto of idea.impactos" class="tag">{{ impacto }}</span>
+          </p>
+        </div>
 
-    <div *ngIf="idea.impactos?.length">
-      <p><strong>Impactos:</strong> {{ idea.impactos.join(', ') }}</p>
-    </div>
+        <div class="info-grid">
+            <div class="info-group" *ngIf="idea.interferencia !== undefined">
+              <strong>Interferência:</strong>
+              <p>{{ idea.interferencia }} / 10</p>
+            </div>
+            <div class="info-group" *ngIf="idea.expectativaMelhoria !== undefined">
+              <strong>Expectativa:</strong>
+              <p>{{ idea.expectativaMelhoria }} / 10</p>
+            </div>
+        </div>
 
-    <p *ngIf="idea.interferencia !== undefined">
-      <strong>Interferência nas Atividades:</strong> {{ idea.interferencia }}
-    </p>
+        <div class="info-group" *ngIf="idea.nomeKaizen">
+          <strong>Nome Kaizen:</strong>
+          <p>{{ idea.nomeKaizen }}</p>
+        </div>
+      </div>
 
-    <p *ngIf="idea.expectativaMelhoria !== undefined">
-      <strong>Expectativa de Melhoria:</strong> {{ idea.expectativaMelhoria }}
-    </p>
+      <div class="idea-card-footer" *ngIf="idea.imageUrl">
+        <strong>Anexo:</strong>
+        <div *ngIf="idea.imageError" class="error-message-small">{{ idea.imageError }}</div>
+        <div *ngIf="!idea.imageBlobUrl && !idea.imageError" class="spinner-small">Carregando imagem...</div>
 
-    <p *ngIf="idea.nomeKaizen"><strong>Sugestão de Nome Kaizen:</strong> {{ idea.nomeKaizen }}</p>
+        <img *ngIf="idea.imageBlobUrl" [src]="idea.imageBlobUrl" alt="Imagem da Ideia" class="idea-image" />
 
-    <div *ngIf="idea.imageUrl">
-      <p><strong>Imagem:</strong></p>
-      
-      <div *ngIf="idea.imageError" class="error-message-small">{{ idea.imageError }}</div>
-
-      <div *ngIf="!idea.imageBlobUrl && !idea.imageError" class="spinner-small">Carregando...</div>
-      
-      <img *ngIf="idea.imageBlobUrl" [src]="idea.imageBlobUrl" alt="Imagem da Ideia" class="idea-image" />
-      
-      <div class="image-actions" *ngIf="idea.imageBlobUrl">
-        <a [href]="idea.imageBlobUrl" (click)="downloadImage($event, idea)" class="action-button">Baixar</a>
-        <a [href]="idea.imageBlobUrl" target="_blank" rel="noopener noreferrer" class="action-button">Visualizar</a>
+        <div class="image-actions" *ngIf="idea.imageBlobUrl">
+          <a [href]="idea.imageBlobUrl" (click)="downloadImage($event, idea)" class="button button-small">Baixar</a>
+          <a [href]="idea.imageBlobUrl" target="_blank" rel="noopener noreferrer" class="button button-small button-secondary">Visualizar</a>
+        </div>
       </div>
     </div>
-
-    <hr />
-  </li>
-</ul>
+  </div>
+</div>

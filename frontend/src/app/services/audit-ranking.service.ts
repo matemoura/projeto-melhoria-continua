@@ -11,7 +11,7 @@ export interface AreaRanking {
   providedIn: 'root'
 })
 export class AuditRankingService {
-  private apiUrl = 'http://localhost:8080/api/audits/ranking';
+  private apiUrl = 'http://localhost:8080/api/audit/ranking';
 
   constructor(private http: HttpClient) { }
 

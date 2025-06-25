@@ -11,13 +11,8 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-  authService = inject(AuthService);
 
-  constructor() {
-    this.authService.refreshLoginStatus();
-  }
+  public authService = inject(AuthService);
 
-  get isLoggedIn(): boolean {
-    return this.authService.isAuthenticated();
-  }
+  constructor() {}
 }

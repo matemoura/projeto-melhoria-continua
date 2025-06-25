@@ -1,19 +1,34 @@
-<header class="main-header">
-  <nav class="sidebar">
-    <ul>
-      <li><a routerLink="/home">🏠 Home</a></li>
-      <li><a routerLink="/more-ideas/new">✍️ Enviar Ideia</a></li>
-      <li><a routerLink="/more-ideas/list">📋 Ver Ideias</a></li>
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <a routerLink="/home" class="sidebar-brand">
+      <span class="sidebar-logo">🎯</span>
+      <span class="sidebar-title">Melhoria Contínua</span>
+    </a>
+  </div>
+
+  <ul>
+    <li><a routerLink="/home">🏠 Home</a></li>
+    <li><a routerLink="/more-ideas/new">✍️ Enviar Ideia</a></li>
+    <li><a routerLink="/more-ideas/list">📋 Ver Ideias</a></li>
+    <li><a routerLink="/audit/ranking">🏆 Ranking 5S</a></li>
+
+    <ng-container *ngIf="authService.isLoggedIn$ | async">
       <li><a routerLink="/audit/new">📝 Nova Auditoria 5S</a></li>
-      <li><a routerLink="/audit/ranking">🏆 Ranking 5S</a></li>
-    </ul>
-  </nav>
-</header>
+      <li><a (click)="logout()" style="cursor: pointer;">↪️ Logout</a></li>
+    </ng-container>
 
-<main class="container">
-  <router-outlet></router-outlet>
-</main>
+    <ng-container *ngIf="!(authService.isLoggedIn$ | async)">
+      <li><a routerLink="/login">🔒 Login</a></li>
+    </ng-container>
+  </ul>
+</nav>
 
-<footer>
-  <p>&copy; 2025 Melhoria Contínua</p>
-</footer>
+<div class="page-container">
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <footer class="main-footer">
+    <p>&copy; 2025 Melhoria Contínua</p>
+  </footer>
+</div>

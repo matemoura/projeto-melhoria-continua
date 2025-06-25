@@ -1,62 +1,67 @@
-<h3>Nova Auditoria 5S</h3>
-
-<form [formGroup]="auditForm" (ngSubmit)="onSubmit()">
-
-  <div class="form-group">
-    <label for="auditor">Nome do Auditor:</label>
-    <input id="auditor" formControlName="auditor" type="text" required>
+<div class="form-container">
+  <div class="form-header">
+    <h3>Nova Auditoria 5S</h3>
+    <p>Preencha os campos abaixo para registrar a auditoria.</p>
   </div>
 
-  <div formArrayName="auditedAreas">
-    <h4>Áreas Auditadas:</h4>
-    <div *ngFor="let area of auditedAreas.controls; let i = index" [formGroupName]="i" class="area-auditada">
-      
-      <label>Área:</label>
-      <input formControlName="nomeArea" type="text" placeholder="Nome da área">
-
-      <div class="form-group">
-        <label for="seiri">Seiri (Senso de Utilização):</label>
-        <input formControlName="seiri" type="number" min="0" max="10">
-      </div>
-
-      <div class="form-group">
-        <label for="seiton">Seiton (Senso de Organização):</label>
-        <input formControlName="seiton" type="number" min="0" max="10">
-      </div>
-
-      <div class="form-group">
-        <label for="seiso">Seisō (Senso de Limpeza):</label>
-        <input formControlName="seiso" type="number" min="0" max="10">
-      </div>
-
-      <div class="form-group">
-        <label for="seiketsu">Seiketsu (Senso de Padronização):</label>
-        <input formControlName="seiketsu" type="number" min="0" max="10">
-      </div>
-
-      <div class="form-group">
-        <label for="shitsuke">Shitsuke (Senso de Disciplina):</label>
-        <input formControlName="shitsuke" type="number" min="0" max="10">
-      </div>
-
-      <div class="form-group">
-        <label for="notaFinal">Pontuação Final:</label>
-        <input formControlName="notaFinal" type="number" min="0" max="100">
-      </div>
-
-      <hr>
+  <form [formGroup]="auditForm" (ngSubmit)="onSubmit()" novalidate>
+    <div class="form-group">
+      <label for="auditor">Nome do Auditor</label>
+      <input id="auditor" formControlName="auditor" type="text" required>
     </div>
-  </div>
 
-  <button type="button" (click)="addAuditedArea()">Adicionar Área Auditada</button>
+    <div formArrayName="auditedAreas">
+      <h4>Áreas Auditadas</h4>
+      <div *ngFor="let area of auditedAreas.controls; let i = index">
+        <fieldset class="area-auditada">
+          <legend>Área {{ i + 1 }}</legend>
 
-  <div class="form-group">
-    <label for="imagem">Imagem da Auditoria:</label>
-    <input type="file" id="imagem" (change)="onFileSelected($event)">
-  </div>
+          <div class="form-group">
+            <label for="nomeArea-{{i}}">Nome da Área</label>
+            <input id="nomeArea-{{i}}" formControlName="nomeArea" type="text" placeholder="Ex: Linha de Produção A">
+          </div>
 
-  <input type="hidden" formControlName="auditDateTime">
+          <div class="fields-grid">
+            <div class="form-group">
+              <label for="seiri-{{i}}">Seiri (Utilização)</label>
+              <input id="seiri-{{i}}" formControlName="seiri" type="number" min="0" max="10">
+            </div>
+            <div class="form-group">
+              <label for="seiton-{{i}}">Seiton (Organização)</label>
+              <input id="seiton-{{i}}" formControlName="seiton" type="number" min="0" max="10">
+            </div>
+            <div class="form-group">
+              <label for="seiso-{{i}}">Seisō (Limpeza)</label>
+              <input id="seiso-{{i}}" formControlName="seiso" type="number" min="0" max="10">
+            </div>
+            <div class="form-group">
+              <label for="seiketsu-{{i}}">Seiketsu (Padronização)</label>
+              <input id="seiketsu-{{i}}" formControlName="seiketsu" type="number" min="0" max="10">
+            </div>
+            <div class="form-group">
+              <label for="shitsuke-{{i}}">Shitsuke (Disciplina)</label>
+              <input id="shitsuke-{{i}}" formControlName="shitsuke" type="number" min="0" max="10">
+            </div>
+            <div class="form-group">
+                <label for="notaFinal-{{i}}">Pontuação Final</label>
+                <input id="notaFinal-{{i}}" formControlName="notaFinal" type="number" min="0" max="100">
+            </div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+    
+    <div class="form-actions">
+        <button type="button" (click)="addAuditedArea()" class="button button-secondary">Adicionar Área</button>
+    </div>
 
-  <button type="submit" [disabled]="!auditForm.valid">Enviar Auditoria</button>
+    <div class="form-group">
+      <label for="imagem">Anexar Imagem (opcional)</label>
+      <input type="file" id="imagem" (change)="onFileSelected($event)">
+    </div>
 
-</form>
+    <input type="hidden" formControlName="auditDateTime">
+
+    <button type="submit" [disabled]="!auditForm.valid" class="button button-submit">Enviar Auditoria</button>
+  </form>
+</div>

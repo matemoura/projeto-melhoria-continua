@@ -1,112 +1,71 @@
-body {
-  background-color: #eaf6ff;
-  font-family: 'Segoe UI', sans-serif;
-  color: #003366;
-  margin: 0;
-  padding: 0;
+:host {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .login-container {
   width: 100%;
-  max-width: 500px;
-  margin: 4rem auto;
-  padding: 30px;
-  border-radius: 12px;
+  max-width: 480px;
+  padding: 40px;
   background-color: #ffffff;
-  border: 2px solid #b3ddff;
-  box-shadow: 0 6px 12px rgba(0, 102, 204, 0.1);
+  border: 1px solid #e0e7ff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 80, 160, 0.1);
 }
 
 .login-container h2 {
   text-align: center;
   color: #003366;
-  margin-bottom: 25px;
-  font-size: 1.6em;
+  margin-top: 0;
+  margin-bottom: 30px;
+  font-size: 2em;
+  font-weight: 600;
 }
 
-.login-container label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: bold;
-  color: #004080;
-  font-size: 1em;
-}
-
-.login-container input[type="text"],
-.login-container input[type="email"],
-.login-container input[type="password"] {
+.login-button {
   width: 100%;
-  padding: 10px;
-  border: 1.5px solid #b3ddff;
-  border-radius: 6px;
-  background-color: #f0faff;
-  font-size: 1em;
-  color: #003366;
-  transition: border-color 0.3s ease;
-  margin-bottom: 15px;
+  margin-top: 10px;
 }
 
-.login-container input:focus {
-  border-color: #3399ff;
-  outline: none;
-}
-
-.login-container button[type="submit"] {
-  display: block;
-  width: 100%;
-  padding: 14px;
-  background-color: #3399ff;
-  color: #fff;
-  font-size: 1.1em;
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.login-container button[type="submit"]:hover:enabled {
-  background-color: #007acc;
-}
-
-.login-container button[type="submit"]:disabled {
-  background-color: #a8c9e6;
-  cursor: not-allowed;
-}
-
-.error {
-  color: #cc0000;
+.server-error-message {
+  color: #d93025;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
   text-align: center;
-  margin-top: 1rem;
-  font-size: 0.9em;
+  padding: 12px;
+  margin-top: 20px;
+  font-size: 0.95em;
 }
 
-@media (max-width: 768px) {
-  .login-container {
-    padding: 20px;
-    margin: 2rem 1rem;
-  }
-
-  .login-container h2 {
-    font-size: 1.4em;
-  }
+.error-message {
+  color: #d93025;
+  font-size: 0.875em;
+  padding-top: 5px;
 }
 
 .switch-mode {
-  margin-top: 15px;
+  margin-top: 25px;
   text-align: center;
 }
 
 .switch-mode a {
   color: #007bff;
   text-decoration: none;
-  font-size: 0.95em;
+  font-size: 1em;
+  font-weight: 500;
 }
 
 .switch-mode a:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 576px) {
+  .login-container {
+    padding: 25px;
+  }
 }

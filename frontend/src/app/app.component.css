@@ -1,147 +1,121 @@
-body {
-  font-family: 'Segoe UI', sans-serif;
-  margin: 0;
-  background-color: #eaf6ff; 
-  color: #003366;
-  line-height: 1.6;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  color: #003366;
-  margin-top: 1em;
-  margin-bottom: 0.5em;
-}
-
-a {
-  color: #3399ff;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-.form-group {
-  margin-bottom: 1em;
-}
-
-.form-group label {
+:host {
   display: block;
-  margin-bottom: 0.5em;
-  font-weight: bold;
-  color: #004080;
-}
-
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="number"],
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  padding: 10px;
-  border: 1.5px solid #b3ddff;
-  border-radius: 5px;
-  background-color: #f0faff;
-  color: #003366;
-  font-size: 1em;
-  box-sizing: border-box;
-}
-
-.form-group textarea {
-  resize: vertical;
-  min-height: 60px;
-}
-
-.form-group input[type="file"] {
-  padding: 5px;
-  border: 1.5px solid #b3ddff;
-  border-radius: 4px;
-  background-color: #f0faff;
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-  border-color: #3399ff;
-  outline: none;
-  box-shadow: 0 0 6px rgba(0, 123, 255, 0.25);
-}
-
-button {
-  padding: 10px 20px;
-  background-color: #3399ff;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.2s ease-in-out;
-}
-
-button:hover {
-  background-color: #007acc;
-}
-
-button:disabled {
-  background-color: #a8c9e6;
-  cursor: not-allowed;
-}
-
-.error-message {
-  color: #cc0000;
-  font-size: 0.85em;
-  margin-top: 5px;
-}
-
-.spinner {
-  text-align: center;
-  padding: 20px;
-  font-style: italic;
-  color: #666;
-}
-
-.empty-message {
-  text-align: center;
-  padding: 20px;
-  color: #888;
 }
 
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
-  width: 220px;
+  width: 300px; 
   height: 100%;
-  background-color: #f0faff;
-  border-right: 1px solid #b3ddff;
-  padding-top: 40px;
-  box-shadow: 2px 0 5px rgba(0, 102, 204, 0.05);
+  background-color: #ffffff;
+  border-right: 1px solid #e0e7ff;
+  box-shadow: 4px 0 10px rgba(0, 30, 80, 0.05);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease; 
+}
+
+.sidebar-header {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  border-bottom: 1px solid #e0e7ff;
+  flex-shrink: 0;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.sidebar-logo {
+  font-size: 2em;
+}
+
+.sidebar-title {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #003366;
 }
 
 .sidebar ul {
   list-style: none;
-  padding: 0;
+  padding: 15px 0;
   margin: 0;
+  flex-grow: 1;
+  overflow-y: auto;
 }
 
-.sidebar li {
-  margin-bottom: 16px;
-  text-align: left;
-}
-
-.sidebar a {
-  display: block;
-  padding: 12px 20px;
+.sidebar li a {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 14px 25px;
+  margin: 4px 15px;
   color: #004080;
   text-decoration: none;
   font-weight: 500;
-  font-size: 1em;
-  border-radius: 6px;
-  transition: background-color 0.2s, color 0.2s;
+  font-size: 1.2em; 
+  border-radius: 8px;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s;
 }
 
-.sidebar a:hover {
-  background-color: #cfeeff;
+.sidebar li a:hover {
+  background-color: #eaf6ff;
   color: #002f66;
-  font-weight: bold;
+  font-weight: 500;
+  transform: translateX(5px);
+}
+
+.page-container {
+  margin-left: 300px; 
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: margin-left 0.3s ease;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.main-footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e0e7ff;
+  font-size: 0.9em;
+  color: #556;
+}
+
+@media (max-width: 992px) { 
+  .sidebar {
+    width: 260px; 
+  }
+  .page-container {
+    margin-left: 260px;
+  }
+}
+
+@media (max-width: 768px) { 
+  .sidebar {
+    transform: translateX(-100%); 
+  }
+  .page-container {
+    margin-left: 0; 
+  }
+  .main-content {
+    padding: 15px; 
+  }
 }
