@@ -52,13 +52,34 @@ h2 {
   color: #333;
 }
 
-.idea-list img {
+.idea-image {
   margin-top: 15px;
   border-radius: 5px;
-  max-width: 100%;
+  max-width: 250px;
   height: auto;
   display: block;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.image-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.action-button {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 0.9em;
+  transition: background-color 0.2s;
+}
+
+.action-button:hover {
+  background-color: #0056b3;
 }
 
 hr {

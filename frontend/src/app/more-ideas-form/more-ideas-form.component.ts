@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MoreIdeasService } from '../services/more-ideas.service';
@@ -8,11 +8,13 @@ import { MoreIdeasService } from '../services/more-ideas.service';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './more-ideas-form.component.html',
-  styleUrl: './more-ideas-form.component.css'
+  styleUrls: ['./more-ideas-form.component.css'] 
 })
 export class MoreIdeasFormComponent implements OnInit {
   ideaForm!: FormGroup;
   selectedFile: File | null = null;
+
+  @ViewChild('imageInput') imageInput!: ElementRef;
 
   availableImpacts: string[] = [
     'Redução de Custos',
@@ -34,21 +36,21 @@ export class MoreIdeasFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.ideaForm = this.fb.group({
-      name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      department: ['', Validators.required],
-      problemDescription: ['', Validators.required],
-      possibleSolutions: ['', Validators.required],
-      impacts: [[], Validators.required],
-      interference: [null, [Validators.required, Validators.min(0), Validators.max(10)]],
-      expectedImprovement: [null, [Validators.required, Validators.min(0), Validators.max(10)]],
-      kaizenNameSuggestion: ['']
+      nomeUsuario: ['', Validators.required],
+      emailUsuario: ['', [Validators.required, Validators.email]],
+      setor: ['', Validators.required],
+      descricaoProblema: ['', Validators.required],
+      possiveisSolucoes: ['', Validators.required],
+      impactos: [[], Validators.required],
+      interferencia: [null, [Validators.required, Validators.min(0), Validators.max(10)]],
+      expectativaMelhoria: [null, [Validators.required, Validators.min(0), Validators.max(10)]],
+      nomeKaizen: ['']
     });
   }
 
   onCheckboxChange(event: Event): void {
     const checkbox = event.target as HTMLInputElement;
-    const impactsArray: string[] = this.ideaForm.value.impacts;
+    const impactsArray: string[] = this.ideaForm.value.impactos;
 
     if (checkbox.checked) {
       if (!impactsArray.includes(checkbox.value)) {
@@ -61,27 +63,32 @@ export class MoreIdeasFormComponent implements OnInit {
       }
     }
 
-    this.ideaForm.patchValue({ impacts: impactsArray });
-    this.ideaForm.get('impacts')?.updateValueAndValidity();
+    this.ideaForm.patchValue({ impactos: impactsArray });
+    this.ideaForm.get('impactos')?.updateValueAndValidity();
   }
 
   onFileSelected(event: Event): void {
-    const element = event.currentTarget as HTMLInputElement;
-    const fileList: FileList | null = element.files;
-    this.selectedFile = fileList && fileList.length > 0 ? fileList[0] : null;
+    const input = event.currentTarget as HTMLInputElement;
+    const file = input.files?.[0];
+    this.selectedFile = file ?? null;
   }
 
   onSubmit(): void {
     if (this.ideaForm.valid) {
       const formData = new FormData();
 
-      Object.entries(this.ideaForm.value).forEach(([key, value]) => {
-        if (key === 'impacts' && Array.isArray(value)) {
-          formData.append(key, value.join(','));
-        } else if (value !== null && value !== undefined) {
-          formData.append(key, value.toString());
-        }
-      });
+      const formValue = this.ideaForm.value;
+      const impactos = formValue.impactos;
+
+      formData.append('name', formValue.nomeUsuario);
+      formData.append('email', formValue.emailUsuario);
+      formData.append('department', formValue.setor);
+      formData.append('problemDescription', formValue.descricaoProblema);
+      formData.append('possibleSolutions', formValue.possiveisSolucoes || '');
+      formData.append('impacts', Array.isArray(impactos) ? impactos.join(',') : '');
+      formData.append('interference', formValue.interferencia?.toString() || '0');
+      formData.append('expectedImprovement', formValue.expectativaMelhoria?.toString() || '0');
+      formData.append('kaizenNameSuggestion', formValue.nomeKaizen || '');
 
       if (this.selectedFile) {
         formData.append('image', this.selectedFile, this.selectedFile.name);
@@ -91,8 +98,23 @@ export class MoreIdeasFormComponent implements OnInit {
         next: (response) => {
           console.log('Ideia enviada com sucesso!', response);
           alert('Ideia enviada com sucesso!');
-          this.ideaForm.reset();
+          
+          this.ideaForm.reset({
+            nomeUsuario: '',
+            emailUsuario: '',
+            setor: '',
+            descricaoProblema: '',
+            possiveisSolucoes: '',
+            impactos: [],
+            interferencia: null,
+            expectativaMelhoria: null,
+            nomeKaizen: ''
+          });
+          
           this.selectedFile = null;
+          if (this.imageInput) {
+            this.imageInput.nativeElement.value = '';
+          }
         },
         error: (error) => {
           console.error('Erro ao enviar ideia:', error);

@@ -2,43 +2,43 @@
 
 <form [formGroup]="ideaForm" (ngSubmit)="onSubmit()">
   <div class="form-group">
-    <label for="name">Seu Nome:</label>
-    <input id="name" type="text" formControlName="name">
-    <div *ngIf="ideaForm.get('name')?.invalid && (ideaForm.get('name')?.dirty || ideaForm.get('name')?.touched)" class="error-message">
-      <div *ngIf="ideaForm.get('name')?.errors?.['required']">Nome é obrigatório.</div>
+    <label for="nomeUsuario">Seu Nome:</label>
+    <input id="nomeUsuario" type="text" formControlName="nomeUsuario">
+    <div *ngIf="ideaForm.get('nomeUsuario')?.invalid && (ideaForm.get('nomeUsuario')?.dirty || ideaForm.get('nomeUsuario')?.touched)" class="error-message">
+      <div *ngIf="ideaForm.get('nomeUsuario')?.errors?.['required']">Nome é obrigatório.</div>
     </div>
   </div>
 
   <div class="form-group">
-    <label for="email">Seu Email:</label>
-    <input id="email" type="email" formControlName="email">
-    <div *ngIf="ideaForm.get('email')?.invalid && (ideaForm.get('email')?.dirty || ideaForm.get('email')?.touched)" class="error-message">
-      <div *ngIf="ideaForm.get('email')?.errors?.['required']">Email é obrigatório.</div>
-      <div *ngIf="ideaForm.get('email')?.errors?.['email']">Por favor, insira um email válido.</div>
+    <label for="emailUsuario">Seu Email:</label>
+    <input id="emailUsuario" type="email" formControlName="emailUsuario">
+    <div *ngIf="ideaForm.get('emailUsuario')?.invalid && (ideaForm.get('emailUsuario')?.dirty || ideaForm.get('emailUsuario')?.touched)" class="error-message">
+      <div *ngIf="ideaForm.get('emailUsuario')?.errors?.['required']">Email é obrigatório.</div>
+      <div *ngIf="ideaForm.get('emailUsuario')?.errors?.['email']">Por favor, insira um email válido.</div>
     </div>
   </div>
 
   <div class="form-group">
-    <label for="department">Setor:</label>
-    <input id="department" type="text" formControlName="department">
-    <div *ngIf="ideaForm.get('department')?.invalid && (ideaForm.get('department')?.dirty || ideaForm.get('department')?.touched)" class="error-message">
-      <div *ngIf="ideaForm.get('department')?.errors?.['required']">Setor é obrigatório.</div>
+    <label for="setor">Setor:</label>
+    <input id="setor" type="text" formControlName="setor">
+    <div *ngIf="ideaForm.get('setor')?.invalid && (ideaForm.get('setor')?.dirty || ideaForm.get('setor')?.touched)" class="error-message">
+      <div *ngIf="ideaForm.get('setor')?.errors?.['required']">Setor é obrigatório.</div>
     </div>
   </div>
 
   <div class="form-group">
-    <label for="problemDescription">Descrição do Problema:</label>
-    <textarea id="problemDescription" formControlName="problemDescription"></textarea>
-    <div *ngIf="ideaForm.get('problemDescription')?.invalid && (ideaForm.get('problemDescription')?.dirty || ideaForm.get('problemDescription')?.touched)" class="error-message">
-      <div *ngIf="ideaForm.get('problemDescription')?.errors?.['required']">Descrição do problema é obrigatória.</div>
+    <label for="descricaoProblema">Descrição do Problema:</label>
+    <textarea id="descricaoProblema" formControlName="descricaoProblema"></textarea>
+    <div *ngIf="ideaForm.get('descricaoProblema')?.invalid && (ideaForm.get('descricaoProblema')?.dirty || ideaForm.get('descricaoProblema')?.touched)" class="error-message">
+      <div *ngIf="ideaForm.get('descricaoProblema')?.errors?.['required']">Descrição do problema é obrigatória.</div>
     </div>
   </div>
 
   <div class="form-group">
-    <label for="possibleSolutions">Possíveis Soluções:</label>
-    <textarea id="possibleSolutions" formControlName="possibleSolutions"></textarea>
-    <div *ngIf="ideaForm.get('possibleSolutions')?.invalid && (ideaForm.get('possibleSolutions')?.dirty || ideaForm.get('possibleSolutions')?.touched)" class="error-message">
-      <div *ngIf="ideaForm.get('possibleSolutions')?.errors?.['required']">Possíveis soluções são obrigatórias.</div>
+    <label for="possiveisSolucoes">Possíveis Soluções:</label>
+    <textarea id="possiveisSolucoes" formControlName="possiveisSolucoes"></textarea>
+    <div *ngIf="ideaForm.get('possiveisSolucoes')?.invalid && (ideaForm.get('possiveisSolucoes')?.dirty || ideaForm.get('possiveisSolucoes')?.touched)" class="error-message">
+      <div *ngIf="ideaForm.get('possiveisSolucoes')?.errors?.['required']">Possíveis soluções são obrigatórias.</div>
     </div>
   </div>
 
@@ -49,41 +49,33 @@
         type="checkbox"
         [value]="impact"
         (change)="onCheckboxChange($event)"
-        [checked]="ideaForm.value.impacts.includes(impact)"
+        [checked]="ideaForm.value.impactos.includes(impact)"
       />
       <span>{{ impact }}</span>
     </div>
-    <div *ngIf="ideaForm.get('impacts')?.invalid && (ideaForm.get('impacts')?.dirty || ideaForm.get('impacts')?.touched)" class="error-message">
-      <div *ngIf="ideaForm.get('impacts')?.errors?.['required']">Selecione pelo menos um impacto.</div>
+    <div *ngIf="ideaForm.get('impactos')?.invalid && (ideaForm.get('impactos')?.dirty || ideaForm.get('impactos')?.touched)" class="error-message">
+      <div *ngIf="ideaForm.get('impactos')?.errors?.['required']">Selecione pelo menos um impacto.</div>
     </div>
   </div>
 
   <div class="form-group">
-    <label for="interference">Interferência nas Atividades (0-10):</label>
-    <input id="interference" type="number" formControlName="interference">
-    <div *ngIf="ideaForm.get('interference')?.invalid && (ideaForm.get('interference')?.dirty || ideaForm.get('interference')?.touched)" class="error-message">
-      <div *ngIf="ideaForm.get('interference')?.errors?.['required']">Interferência é obrigatória.</div>
-      <div *ngIf="ideaForm.get('interference')?.errors?.['min'] || ideaForm.get('interference')?.errors?.['max']">Valor deve ser entre 0 e 10.</div>
-    </div>
+    <label for="interferencia">Interferência nas Atividades (0-10):</label>
+    <input id="interferencia" type="number" formControlName="interferencia">
   </div>
 
   <div class="form-group">
-    <label for="expectedImprovement">Expectativa de Melhoria (0-10):</label>
-    <input id="expectedImprovement" type="number" formControlName="expectedImprovement">
-    <div *ngIf="ideaForm.get('expectedImprovement')?.invalid && (ideaForm.get('expectedImprovement')?.dirty || ideaForm.get('expectedImprovement')?.touched)" class="error-message">
-      <div *ngIf="ideaForm.get('expectedImprovement')?.errors?.['required']">Expectativa de melhoria é obrigatória.</div>
-      <div *ngIf="ideaForm.get('expectedImprovement')?.errors?.['min'] || ideaForm.get('expectedImprovement')?.errors?.['max']">Valor deve ser entre 0 e 10.</div>
-    </div>
+    <label for="expectativaMelhoria">Expectativa de Melhoria (0-10):</label>
+    <input id="expectativaMelhoria" type="number" formControlName="expectativaMelhoria">
   </div>
 
   <div class="form-group">
-    <label for="kaizenNameSuggestion">Sugestão de Nome Kaizen:</label>
-    <input id="kaizenNameSuggestion" type="text" formControlName="kaizenNameSuggestion">
+    <label for="nomeKaizen">Sugestão de Nome Kaizen:</label>
+    <input id="nomeKaizen" type="text" formControlName="nomeKaizen">
   </div>
 
   <div class="form-group">
     <label for="image">Anexar Imagem (opcional):</label>
-    <input id="image" type="file" (change)="onFileSelected($event)">
+    <input #imageInput id="image" type="file" (change)="onFileSelected($event)">
   </div>
 
   <button type="submit" [disabled]="!ideaForm.valid">Enviar Ideia</button>

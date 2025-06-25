@@ -14,23 +14,41 @@
 
 <ul *ngIf="!isLoading && ideas.length > 0" class="idea-list">
   <li *ngFor="let idea of ideas">
-    <h3>{{ idea.nomeUsuario }} ({{ idea.emailUsuario }})</h3>
+    <h3>{{ idea.nomeUsuario || 'Anônimo' }} ({{ idea.emailUsuario || 'E-mail não informado' }})</h3>
+
     <p><strong>Setor:</strong> {{ idea.setor }}</p>
-    <p><strong>Descrição:</strong> {{ idea.descricaoProblema }}</p>
+    <p><strong>Descrição do Problema:</strong> {{ idea.descricaoProblema }}</p>
+    <p *ngIf="idea.possiveisSolucoes"><strong>Possíveis Soluções:</strong> {{ idea.possiveisSolucoes }}</p>
 
-    <div *ngIf="idea.possiveisSolucoes">
-      <p><strong>Soluções:</strong> {{ idea.possiveisSolucoes }}</p>
-    </div>
-
-    <div *ngIf="idea.impactos && idea.impactos.length > 0">
+    <div *ngIf="idea.impactos?.length">
       <p><strong>Impactos:</strong> {{ idea.impactos.join(', ') }}</p>
     </div>
 
+    <p *ngIf="idea.interferencia !== undefined">
+      <strong>Interferência nas Atividades:</strong> {{ idea.interferencia }}
+    </p>
+
+    <p *ngIf="idea.expectativaMelhoria !== undefined">
+      <strong>Expectativa de Melhoria:</strong> {{ idea.expectativaMelhoria }}
+    </p>
+
+    <p *ngIf="idea.nomeKaizen"><strong>Sugestão de Nome Kaizen:</strong> {{ idea.nomeKaizen }}</p>
+
     <div *ngIf="idea.imageUrl">
       <p><strong>Imagem:</strong></p>
-      <img [src]="idea.imageUrl" alt="Imagem da Ideia" width="250">
+      
+      <div *ngIf="idea.imageError" class="error-message-small">{{ idea.imageError }}</div>
+
+      <div *ngIf="!idea.imageBlobUrl && !idea.imageError" class="spinner-small">Carregando...</div>
+      
+      <img *ngIf="idea.imageBlobUrl" [src]="idea.imageBlobUrl" alt="Imagem da Ideia" class="idea-image" />
+      
+      <div class="image-actions" *ngIf="idea.imageBlobUrl">
+        <a [href]="idea.imageBlobUrl" (click)="downloadImage($event, idea)" class="action-button">Baixar</a>
+        <a [href]="idea.imageBlobUrl" target="_blank" rel="noopener noreferrer" class="action-button">Visualizar</a>
+      </div>
     </div>
 
-    <hr>
+    <hr />
   </li>
 </ul>
