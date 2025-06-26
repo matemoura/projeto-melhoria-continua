@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
 export interface MoreIdeaRaw {
@@ -29,20 +29,21 @@ export class MoreIdeasService {
 
   constructor(private http: HttpClient) { }
 
-  loadIdeas(): Observable<MoreIdeaRaw[]> {
-    return this.http.get<MoreIdeaRaw[]>(this.apiUrl);
+  loadIdeas(name?: string): Observable<MoreIdeaRaw[]> {
+    let params = new HttpParams();
+    if (name) {
+      params = params.append('name', name);
+    }
+    return this.http.get<MoreIdeaRaw[]>(this.apiUrl, { params });
   }
 
   updateIdeaStatus(id: number, payload: UpdateStatusPayload): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/${id}/status`, payload);
+    const url = `${this.apiUrl}/${id}/status`;
+    return this.http.patch(url, payload);
   }
 
   submitIdea(formData: FormData): Observable<any> {
-    return this.http.post<any>(this.apiUrl, formData).pipe(
-      tap(() => {
-        this.loadIdeas().subscribe(); 
-      })
-    );
+    return this.http.post<any>(this.apiUrl, formData);
   }
 
   getImage(imageUrl: string): Observable<Blob> {

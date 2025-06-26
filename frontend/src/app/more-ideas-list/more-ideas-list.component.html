@@ -4,6 +4,10 @@
     <p>Visualize todas as sugestões de melhoria registradas na plataforma.</p>
   </div>
 
+  <div class="search-container">
+    <input type="text" placeholder="Buscar por nome..." [(ngModel)]="searchTerm" (input)="onSearch()"/>
+  </div>
+
   <div *ngIf="isLoading" class="spinner">Carregando ideias...</div>
   <div *ngIf="loadError" class="error-message">{{ loadError }}</div>
   <div *ngIf="!isLoading && ideas.length === 0" class="empty-message">
@@ -20,7 +24,7 @@
             <p class="user-sector">{{ idea.setor }}</p>
           </div>
         </div>
-        
+
         <div class="idea-status" [ngClass]="'status-' + (idea.status || 'PENDENTE')">
           {{ (idea.status || 'PENDENTE').replace('_', ' ') }}
         </div>

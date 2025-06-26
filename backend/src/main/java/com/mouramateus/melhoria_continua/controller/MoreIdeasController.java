@@ -24,8 +24,8 @@ public class MoreIdeasController {
     private ObjectMapper objectMapper;
 
     @GetMapping
-    public ResponseEntity<List<MoreIdea>> getAllIdeas() {
-        List<MoreIdea> ideas = moreIdeaService.getAllIdeas();
+    public ResponseEntity<List<MoreIdea>> getAllIdeas(@RequestParam(required = false) String name) {
+        List<MoreIdea> ideas = moreIdeaService.getAllIdeas(name);
         return ResponseEntity.ok(ideas);
     }
 

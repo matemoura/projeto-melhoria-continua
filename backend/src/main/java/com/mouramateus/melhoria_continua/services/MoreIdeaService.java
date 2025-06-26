@@ -6,6 +6,7 @@ import com.mouramateus.melhoria_continua.repositories.MoreIdeaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,7 +23,10 @@ public class MoreIdeaService {
 
     private final String uploadDir = "uploads/more-ideas/";
 
-    public List<MoreIdea> getAllIdeas() {
+    public List<MoreIdea> getAllIdeas(String name) {
+        if (StringUtils.hasText(name)) {
+            return moreIdeaRepository.findByNomeUsuarioContainingIgnoreCase(name);
+        }
         return moreIdeaRepository.findAll();
     }
 

@@ -14,7 +14,7 @@ export class ManageIdeasComponent implements OnInit {
   ideas: MoreIdeaRaw[] = [];
   isLoading = true;
   loadError: string | null = null;
-  isUpdating: { [key: number]: boolean } = {}; 
+  isUpdating: { [key: number]: boolean } = {};
 
   statuses = ['PENDENTE', 'EM_ANALISE', 'APROVADA', 'REJEITADA', 'AGUARDANDO_A_IMPLEMENTACAO', 'IMPLEMENTADA'];
 
@@ -55,7 +55,7 @@ export class ManageIdeasComponent implements OnInit {
         console.error('Falha ao atualizar o status:', err);
         alert(`Ocorreu um erro ao salvar o novo status. Verifique o console do backend para mais detalhes (erro: ${err.status}).`);
         this.isUpdating[ideaId] = false;
-        this.loadIdeas(); 
+        this.loadIdeas();
       }
     });
   }
