@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { MoreIdeasFormComponent } from './more-ideas-form/more-ideas-form.component';
 import { MoreIdeasListComponent } from './more-ideas-list/more-ideas-list.component';
+import { ManageIdeasComponent } from './manage-ideas/manage-ideas.component';
 import { AuditFormComponent } from './audit-form/audit-form.component';
 import { AuditRankingComponent } from './audit-ranking/audit-ranking.component';
 import { HomeComponent } from './home/home.component';
@@ -12,6 +13,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'more-ideas/new', component: MoreIdeasFormComponent },
   { path: 'more-ideas/list', component: MoreIdeasListComponent },
+  { path: 'manage-ideas', component: ManageIdeasComponent, canActivate: [authGuard] },
   { path: 'audit/new', component: AuditFormComponent , canActivate: [authGuard]},
   { path: 'audit/ranking', component: AuditRankingComponent },
   { path: '**', redirectTo: '', pathMatch: 'full' }

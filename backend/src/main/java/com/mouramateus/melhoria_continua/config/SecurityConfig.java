@@ -27,7 +27,7 @@ public class SecurityConfig {
                                 "/api/audit/ranking/**",
                                 "/uploads/**"
                         ).permitAll()
-                        .requestMatchers("/api/audit/criar").authenticated()
+                        .requestMatchers("/api/audit/criar", "/api/more-ideas/{id}/status").authenticated()
                         .anyRequest().authenticated()
                 );
 
@@ -38,7 +38,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("http://localhost:4200"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 

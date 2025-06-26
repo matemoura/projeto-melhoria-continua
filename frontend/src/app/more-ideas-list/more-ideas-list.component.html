@@ -20,6 +20,11 @@
             <p class="user-sector">{{ idea.setor }}</p>
           </div>
         </div>
+        
+        <div class="idea-status" [ngClass]="'status-' + (idea.status || 'PENDENTE')">
+          {{ (idea.status || 'PENDENTE').replace('_', ' ') }}
+        </div>
+
       </div>
 
       <div class="idea-card-body">

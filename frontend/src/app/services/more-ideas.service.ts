@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
 export interface MoreIdeaRaw {
+  id: number;
   nomeUsuario: string;
   emailUsuario: string;
   setor: string;
@@ -13,6 +14,11 @@ export interface MoreIdeaRaw {
   expectedImprovement: number;
   kaizenNameSuggestion?: string;
   imageUrl?: string;
+  status: string;
+}
+
+export interface UpdateStatusPayload {
+  status: string;
 }
 
 @Injectable({
@@ -25,6 +31,10 @@ export class MoreIdeasService {
 
   loadIdeas(): Observable<MoreIdeaRaw[]> {
     return this.http.get<MoreIdeaRaw[]>(this.apiUrl);
+  }
+
+  updateIdeaStatus(id: number, payload: UpdateStatusPayload): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${id}/status`, payload);
   }
 
   submitIdea(formData: FormData): Observable<any> {

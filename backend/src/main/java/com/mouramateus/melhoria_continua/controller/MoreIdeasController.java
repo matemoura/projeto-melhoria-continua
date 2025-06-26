@@ -1,6 +1,7 @@
 package com.mouramateus.melhoria_continua.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mouramateus.melhoria_continua.dto.UpdateStatusRequest;
 import com.mouramateus.melhoria_continua.entities.MoreIdea;
 import com.mouramateus.melhoria_continua.services.MoreIdeaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/more-ideas")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PATCH, RequestMethod.PUT, RequestMethod.DELETE})
 public class MoreIdeasController {
 
     @Autowired
@@ -54,5 +55,13 @@ public class MoreIdeasController {
 
         MoreIdea savedIdea = moreIdeaService.submitIdea(idea, imageFile);
         return ResponseEntity.ok(savedIdea);
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<MoreIdea> updateIdeaStatus(
+            @PathVariable Long id,
+            @RequestBody UpdateStatusRequest request) {
+        MoreIdea updatedIdea = moreIdeaService.updateStatus(id, request.getStatus());
+        return ResponseEntity.ok(updatedIdea);
     }
 }

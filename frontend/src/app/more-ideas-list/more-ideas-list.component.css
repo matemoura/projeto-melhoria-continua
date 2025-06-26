@@ -8,6 +8,7 @@
   width: 100%;
   max-width: 1200px;
   box-sizing: border-box;
+  padding: 20px;
 }
 
 .list-header {
@@ -17,7 +18,7 @@
 
 .list-header h2 {
   color: #003366;
-  font-size: 2em;
+  font-size: 2.2em;
   margin: 0 0 10px 0;
 }
 
@@ -40,7 +41,7 @@
   box-shadow: 0 8px 16px rgba(0, 80, 160, 0.07);
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .idea-card:hover {
@@ -51,6 +52,10 @@
 .idea-card-header {
   padding: 20px;
   border-bottom: 1px solid #e0e7ff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
 }
 
 .user-info {
@@ -68,6 +73,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .user-name {
@@ -83,9 +89,50 @@
   color: #555;
 }
 
+.idea-status {
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 0.85em;
+  font-weight: 700;
+  text-transform: capitalize; 
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.status-PENDENTE {
+  background-color: #808080;
+  color: #ffffff;
+}
+
+.status-EM_ANALISE {
+  background-color: #ffc107;
+  color: #212529; 
+}
+
+.status-APROVADA {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+.status-REJEITADA {
+  background-color: #dc3545;
+  color: #ffffff;
+}
+
+.status-AGUARDANDO_A_IMPLEMENTACAO {
+  background-color: #fd7e14;
+  color: #ffffff;
+}
+
+.status-IMPLEMENTADA {
+  background-color: #28a745;
+  color: #ffffff;
+}
+
+
 .idea-card-body {
   padding: 20px;
-  flex-grow: 1; 
+  flex-grow: 1;
 }
 
 .info-group {
@@ -103,12 +150,13 @@
 .info-group p {
   margin: 0;
   color: #333;
+  line-height: 1.5;
 }
 
 .info-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
 }
 
 .impact-tags {
@@ -133,7 +181,6 @@
 
 .idea-image {
   width: 100%;
-  max-width: 300px;
   height: auto;
   border-radius: 8px;
   margin-top: 10px;
@@ -151,8 +198,8 @@
 }
 
 .button.button-secondary {
-    background-color: #6c757d;
+  background-color: #6c757d;
 }
 .button.button-secondary:hover {
-    background-color: #5a6268;
+  background-color: #5a6268;
 }

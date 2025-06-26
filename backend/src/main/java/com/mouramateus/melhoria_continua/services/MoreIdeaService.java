@@ -1,6 +1,7 @@
 package com.mouramateus.melhoria_continua.services;
 
 import com.mouramateus.melhoria_continua.entities.MoreIdea;
+import com.mouramateus.melhoria_continua.enums.StatusIdea;
 import com.mouramateus.melhoria_continua.repositories.MoreIdeaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,13 @@ public class MoreIdeaService {
             Files.copy(imageFile.getInputStream(), uploadPath.resolve(fileName));
             idea.setImageUrl("/uploads/more-ideas/" + fileName);
         }
+        return moreIdeaRepository.save(idea);
+    }
+
+    public MoreIdea updateStatus(Long id, StatusIdea status) {
+        MoreIdea idea = moreIdeaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ideia não encontrada"));
+        idea.setStatus(status);
         return moreIdeaRepository.save(idea);
     }
 }

@@ -1,10 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core'; 
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MoreIdeasService, MoreIdeaRaw } from '../services/more-ideas.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 
 interface MoreIdeaUI {
+  id: number;
   nomeUsuario: string;
   emailUsuario: string;
   setor: string;
@@ -15,9 +16,10 @@ interface MoreIdeaUI {
   expectativaMelhoria: number;
   nomeKaizen?: string;
   imageUrl?: string;
-  imageBlobUrl?: SafeUrl; 
-  originalFileName?: string; 
+  imageBlobUrl?: SafeUrl;
+  originalFileName?: string;
   imageError?: string;
+  status: string;
 }
 
 @Component({
@@ -44,6 +46,7 @@ export class MoreIdeasListComponent implements OnInit, OnDestroy {
     const ideasSub = this.moreIdeasService.loadIdeas().subscribe({
       next: (rawIdeas: MoreIdeaRaw[]) => {
         this.ideas = rawIdeas.map((item) => ({
+          id: item.id,
           nomeUsuario: item.nomeUsuario,
           emailUsuario: item.emailUsuario,
           setor: item.setor,
@@ -55,6 +58,7 @@ export class MoreIdeasListComponent implements OnInit, OnDestroy {
           nomeKaizen: item.kaizenNameSuggestion,
           imageUrl: item.imageUrl,
           originalFileName: item.imageUrl ? item.imageUrl.split('/').pop() : 'imagem.png',
+          status: item.status,
         }));
         this.loadImagesForIdeas();
         this.isLoading = false;
@@ -79,7 +83,6 @@ export class MoreIdeasListComponent implements OnInit, OnDestroy {
         const imageSub = this.moreIdeasService.getImage(fullImageUrl).subscribe({
           next: blob => {
             const objectUrl = URL.createObjectURL(blob);
-            // Agora 'this.sanitizer' existe porque foi injetado no construtor
             idea.imageBlobUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
           },
           error: err => {

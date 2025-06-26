@@ -16,6 +16,7 @@
       <div class="home-links">
         <a routerLink="/more-ideas/new" class="button">✍️ Enviar Nova Ideia</a>
         <a routerLink="/more-ideas/list" class="button">📋 Ver Lista de Ideias</a>
+        <a *ngIf="authService.isLoggedIn$ | async" routerLink="/manage-ideas" class="button">📊 Gerenciar Ideias</a>
       </div>
     </section>
 

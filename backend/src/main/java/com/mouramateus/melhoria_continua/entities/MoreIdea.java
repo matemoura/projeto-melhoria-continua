@@ -1,5 +1,6 @@
 package com.mouramateus.melhoria_continua.entities;
 
+import com.mouramateus.melhoria_continua.enums.StatusIdea;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -22,6 +23,9 @@ public class MoreIdea {
     private Integer expectedImprovement;
     private String kaizenNameSuggestion;
     private String imageUrl;
+
+    @Enumerated(EnumType.STRING)
+    private StatusIdea status;
 
     public MoreIdea() {
     }
@@ -112,5 +116,13 @@ public class MoreIdea {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public StatusIdea getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusIdea status) {
+        this.status = status;
     }
 }
