@@ -44,7 +44,25 @@
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.search-container input:focus {
+.search-container {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  max-width: 600px;
+  margin: 0 auto 40px auto;
+}
+
+.search-container input, .search-container select { 
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 50px; 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-container input:focus, .search-container select:focus {
   outline: none;
   border-color: #0056b3;
   box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.15);
@@ -104,6 +122,15 @@
   font-size: 1.2em;
   font-weight: 600;
   color: #003366;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-email {
+  margin: 2px 0;
+  font-size: 0.85em;
+  color: #888;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

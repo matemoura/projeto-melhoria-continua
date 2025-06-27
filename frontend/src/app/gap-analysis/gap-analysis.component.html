@@ -1,0 +1,38 @@
+<div class="container">
+  <div class="table-container card">
+    <table *ngIf="!isLoading && !errorMessage">
+      <thead>
+        <tr>
+          <th class="sector-col">Setor</th>
+          <th *ngFor="let month of displayedMonths" class="month-col">{{ month.name | titlecase }}</th>
+          <th class="total-col">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let data of gapData">
+          <tr>
+            <td class="sector-name">{{ data.sector }}</td>
+            <td *ngFor="let month of data.monthlyData" [hidden]="!isMonthDisplayed(month.month)">
+              <div class="cell-data">
+                <span class="value goal">{{ month.goal }}</span>
+                <span class="value realized">{{ month.realized }}</span>
+                <span class="value gap" [ngClass]="{'positive-gap': month.gap >= 0, 'negative-gap': month.gap < 0}">
+                  {{ month.gap }}
+                </span>
+              </div>
+            </td>
+            <td [hidden]="!isMonthDisplayed(12)">
+              <div class="cell-data">
+                <span class="value goal">{{ data.totalGoal }}</span>
+                <span class="value realized">{{ data.totalRealized }}</span>
+                <span class="value gap" [ngClass]="{'positive-gap': data.totalGap >= 0, 'negative-gap': data.totalGap < 0}">
+                  {{ data.totalGap }}
+                </span>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+      </table>
+  </div>
+  </div>

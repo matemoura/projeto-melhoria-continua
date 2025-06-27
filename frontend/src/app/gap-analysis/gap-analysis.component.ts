@@ -38,12 +38,7 @@ export class ManageIdeasComponent implements OnInit {
     this.moreIdeasService.loadIdeas().subscribe({
       next: (data: MoreIdeaRaw[]) => {
         this.ideas = data.map(idea => ({
-          id: idea.id,
-          nomeUsuario: idea.nomeUsuario,
-          setor: idea.setor,
-          titulo: idea.titulo,
-          descricaoProblema: idea.descricaoProblema,
-          status: idea.status,
+          ...idea,
           newStatus: idea.status
         }));
         this.isLoading = false;

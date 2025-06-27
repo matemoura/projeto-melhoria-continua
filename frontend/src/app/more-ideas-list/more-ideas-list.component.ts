@@ -3,25 +3,26 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MoreIdeasService, MoreIdeaRaw } from '../services/more-ideas.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { Subscription, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { Subscription, Subject, combineLatest } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, startWith } from 'rxjs/operators';
 
 interface MoreIdeaUI {
   id: number;
   nomeUsuario: string;
-  emailUsuario: string;
+  emailUsuario?: string;
   setor: string;
-  descricaoProblema: string;
-  possiveisSolucoes: string;
-  impactos: string[];
-  interferencia: number;
-  expectativaMelhoria: number;
+  status: string;
+  titulo: string; 
+  descricaoProblema: string; 
+  possiveisSolucoes?: string;
+  impactos?: string[];
+  interferencia?: number;
+  expectativaMelhoria?: number;
   nomeKaizen?: string;
   imageUrl?: string;
   imageBlobUrl?: SafeUrl;
   originalFileName?: string;
   imageError?: string;
-  status: string;
 }
 
 @Component({
@@ -36,7 +37,12 @@ export class MoreIdeasListComponent implements OnInit, OnDestroy {
   isLoading = true;
   loadError = '';
   searchTerm: string = '';
+  selectedStatus: string = '';
+
   private searchSubject = new Subject<string>();
+  private statusSubject = new Subject<string>();
+
+  statuses = ['PENDENTE', 'EM_ANALISE', 'APROVADA', 'REJEITADA', 'AGUARDANDO_A_IMPLEMENTACAO', 'IMPLEMENTADA'];
 
   private imageSubscriptions: Subscription[] = [];
   private backendUrl = 'http://localhost:8080';
@@ -47,20 +53,22 @@ export class MoreIdeasListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.searchSubject.pipe(
-      debounceTime(300),
+    combineLatest([
+      this.searchSubject.pipe(startWith(''), debounceTime(300)),
+      this.statusSubject.pipe(startWith(''))
+    ]).pipe(
       distinctUntilChanged(),
-      switchMap(term => {
+      switchMap(([term, status]) => {
         this.isLoading = true;
-        return this.moreIdeasService.loadIdeas(term);
+        return this.moreIdeasService.loadIdeas(term, status);
       })
     ).subscribe({
       next: (rawIdeas: MoreIdeaRaw[]) => {
-        this.ideas = rawIdeas.map(this.mapIdeaToUI);
+        this.ideas = rawIdeas.map(this.mapIdeaToUI.bind(this));
         this.loadImagesForIdeas();
         this.isLoading = false;
       },
-      error: err => {
+      error: (err: any) => {
         this.loadError = 'Erro ao carregar as ideias.';
         this.isLoading = false;
         console.error(err);
@@ -76,6 +84,12 @@ export class MoreIdeasListComponent implements OnInit, OnDestroy {
 
   onSearch(): void {
     this.searchSubject.next(this.searchTerm);
+    this.statusSubject.next(this.selectedStatus);
+  }
+
+  formatStatusForDisplay(status: string): string {
+    if (!status) return 'Pendente';
+    return status.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
   }
 
   private mapIdeaToUI(item: MoreIdeaRaw): MoreIdeaUI {
@@ -84,6 +98,8 @@ export class MoreIdeasListComponent implements OnInit, OnDestroy {
       nomeUsuario: item.nomeUsuario,
       emailUsuario: item.emailUsuario,
       setor: item.setor,
+      status: item.status,
+      titulo: item.titulo,
       descricaoProblema: item.descricaoProblema,
       possiveisSolucoes: item.possiveisSolucoes,
       impactos: item.impactos,
@@ -92,20 +108,19 @@ export class MoreIdeasListComponent implements OnInit, OnDestroy {
       nomeKaizen: item.kaizenNameSuggestion,
       imageUrl: item.imageUrl,
       originalFileName: item.imageUrl ? item.imageUrl.split('/').pop() : 'imagem.png',
-      status: item.status,
     };
   }
 
   loadImagesForIdeas(): void {
     this.ideas.forEach((idea) => {
       if (idea.imageUrl) {
-        const fullImageUrl = `<span class="math-inline">\{this\.backendUrl\}</span>{idea.imageUrl}`;
+        const fullImageUrl = `${this.backendUrl}${idea.imageUrl}`;
         const imageSub = this.moreIdeasService.getImage(fullImageUrl).subscribe({
           next: blob => {
             const objectUrl = URL.createObjectURL(blob);
             idea.imageBlobUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
           },
-          error: err => {
+          error: (err: any) => {
             console.error(`Falha ao carregar imagem ${idea.originalFileName}:`, err);
             idea.imageError = 'Não foi possível carregar a imagem.';
           }

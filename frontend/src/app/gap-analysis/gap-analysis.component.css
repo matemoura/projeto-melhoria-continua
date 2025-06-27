@@ -1,0 +1,71 @@
+.container {
+  width: 95%;
+  margin: 20px auto;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 80, 160, 0.08);
+  margin-bottom: 25px;
+}
+
+.filters-card {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+th, td {
+  padding: 12px 8px;
+  border: 1px solid #e0e7ff;
+}
+
+th {
+  background-color: #f2f7ff;
+}
+
+.cell-data {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.value {
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.goal { background-color: #eaf6ff; color: #0056b3; }
+.realized { background-color: #e6ffed; color: #1e7e34; }
+.gap { font-weight: bold; }
+.positive-gap { color: #28a745; }
+.negative-gap { color: #dc3545; }
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 15px;
+}
+.legend-item::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  margin-right: 6px;
+}
+.legend-item.goal-row::before { background-color: #eaf6ff; }
+.legend-item.realized-row::before { background-color: #e6ffed; }

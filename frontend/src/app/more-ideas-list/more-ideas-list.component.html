@@ -6,6 +6,10 @@
 
   <div class="search-container">
     <input type="text" placeholder="Buscar por nome..." [(ngModel)]="searchTerm" (input)="onSearch()"/>
+    <select [(ngModel)]="selectedStatus" (change)="onSearch()">
+      <option value="">Todos os Status</option>
+      <option *ngFor="let status of statuses" [value]="status">{{ formatStatusForDisplay(status) }}</option>
+    </select>
   </div>
 
   <div *ngIf="isLoading" class="spinner">Carregando ideias...</div>
@@ -21,17 +25,17 @@
           <span class="user-avatar">👤</span>
           <div>
             <h3 class="user-name">{{ idea.nomeUsuario || 'Anônimo' }}</h3>
+            <p class="user-email">{{ idea.emailUsuario }}</p>
             <p class="user-sector">{{ idea.setor }}</p>
           </div>
         </div>
-
         <div class="idea-status" [ngClass]="'status-' + (idea.status || 'PENDENTE')">
           {{ (idea.status || 'PENDENTE').replace('_', ' ') }}
         </div>
-
       </div>
 
       <div class="idea-card-body">
+
         <div class="info-group">
           <strong>Descrição do Problema:</strong>
           <p>{{ idea.descricaoProblema }}</p>
@@ -50,34 +54,32 @@
         </div>
 
         <div class="info-grid">
-            <div class="info-group" *ngIf="idea.interferencia !== undefined">
-              <strong>Interferência:</strong>
-              <p>{{ idea.interferencia }} / 10</p>
-            </div>
-            <div class="info-group" *ngIf="idea.expectativaMelhoria !== undefined">
-              <strong>Expectativa:</strong>
-              <p>{{ idea.expectativaMelhoria }} / 10</p>
-            </div>
+          <div class="info-group" *ngIf="idea.interferencia !== undefined">
+            <strong>Interferência:</strong>
+            <p>{{ idea.interferencia }} / 10</p>
+          </div>
+          <div class="info-group" *ngIf="idea.expectativaMelhoria !== undefined">
+            <strong>Expectativa:</strong>
+            <p>{{ idea.expectativaMelhoria }} / 10</p>
+          </div>
         </div>
 
         <div class="info-group" *ngIf="idea.nomeKaizen">
           <strong>Nome Kaizen:</strong>
           <p>{{ idea.nomeKaizen }}</p>
         </div>
-      </div>
-
-      <div class="idea-card-footer" *ngIf="idea.imageUrl">
+        
+      </div> <div class="idea-card-footer" *ngIf="idea.imageUrl">
         <strong>Anexo:</strong>
         <div *ngIf="idea.imageError" class="error-message-small">{{ idea.imageError }}</div>
         <div *ngIf="!idea.imageBlobUrl && !idea.imageError" class="spinner-small">Carregando imagem...</div>
-
+        
         <img *ngIf="idea.imageBlobUrl" [src]="idea.imageBlobUrl" alt="Imagem da Ideia" class="idea-image" />
-
+        
         <div class="image-actions" *ngIf="idea.imageBlobUrl">
           <a [href]="idea.imageBlobUrl" (click)="downloadImage($event, idea)" class="button button-small">Baixar</a>
           <a [href]="idea.imageBlobUrl" target="_blank" rel="noopener noreferrer" class="button button-small button-secondary">Visualizar</a>
         </div>
       </div>
-    </div>
-  </div>
-</div>
+      
+    </div> </div> </div>

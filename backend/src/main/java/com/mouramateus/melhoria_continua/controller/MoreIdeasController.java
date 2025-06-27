@@ -3,6 +3,7 @@ package com.mouramateus.melhoria_continua.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mouramateus.melhoria_continua.dto.UpdateStatusRequest;
 import com.mouramateus.melhoria_continua.entities.MoreIdea;
+import com.mouramateus.melhoria_continua.enums.StatusIdea;
 import com.mouramateus.melhoria_continua.services.MoreIdeaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +25,10 @@ public class MoreIdeasController {
     private ObjectMapper objectMapper;
 
     @GetMapping
-    public ResponseEntity<List<MoreIdea>> getAllIdeas(@RequestParam(required = false) String name) {
-        List<MoreIdea> ideas = moreIdeaService.getAllIdeas(name);
+    public ResponseEntity<List<MoreIdea>> getAllIdeas(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) StatusIdea status) {
+        List<MoreIdea> ideas = moreIdeaService.getAllIdeas(name, status);
         return ResponseEntity.ok(ideas);
     }
 
@@ -52,6 +55,7 @@ public class MoreIdeasController {
         idea.setInterference(interference);
         idea.setExpectedImprovement(expectedImprovement);
         idea.setKaizenNameSuggestion(kaizenNameSuggestion);
+        idea.setStatus(StatusIdea.PENDENTE);
 
         MoreIdea savedIdea = moreIdeaService.submitIdea(idea, imageFile);
         return ResponseEntity.ok(savedIdea);

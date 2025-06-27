@@ -2,7 +2,9 @@ package com.mouramateus.melhoria_continua.entities;
 
 import com.mouramateus.melhoria_continua.enums.StatusIdea;
 import jakarta.persistence.*;
-import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 import java.util.List;
 
@@ -26,6 +28,10 @@ public class MoreIdea {
 
     @Enumerated(EnumType.STRING)
     private StatusIdea status;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     public MoreIdea() {
     }
@@ -124,5 +130,13 @@ public class MoreIdea {
 
     public void setStatus(StatusIdea status) {
         this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

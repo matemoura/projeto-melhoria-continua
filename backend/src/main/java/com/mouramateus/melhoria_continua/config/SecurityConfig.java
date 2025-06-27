@@ -25,6 +25,7 @@ public class SecurityConfig {
                                 "/api/auth/**",
                                 "/api/more-ideas/**",
                                 "/api/audit/ranking/**",
+                                "/api/gap-analysis/**",
                                 "/uploads/**"
                         ).permitAll()
                         .requestMatchers("/api/audit/criar", "/api/more-ideas/{id}/status").authenticated()

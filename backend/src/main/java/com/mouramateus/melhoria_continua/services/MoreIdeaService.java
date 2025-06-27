@@ -23,8 +23,14 @@ public class MoreIdeaService {
 
     private final String uploadDir = "uploads/more-ideas/";
 
-    public List<MoreIdea> getAllIdeas(String name) {
-        if (StringUtils.hasText(name)) {
+    public List<MoreIdea> getAllIdeas(String name, StatusIdea status) {
+        boolean hasName = StringUtils.hasText(name);
+
+        if (status != null && hasName) {
+            return moreIdeaRepository.findByStatusAndNomeUsuarioContainingIgnoreCase(status, name);
+        } else if (status != null) {
+            return moreIdeaRepository.findByStatus(status);
+        } else if (hasName) {
             return moreIdeaRepository.findByNomeUsuarioContainingIgnoreCase(name);
         }
         return moreIdeaRepository.findAll();
