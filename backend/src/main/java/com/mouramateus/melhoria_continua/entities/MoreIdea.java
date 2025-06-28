@@ -25,6 +25,7 @@ public class MoreIdea {
     private Integer expectedImprovement;
     private String kaizenNameSuggestion;
     private String imageUrl;
+    private String kaizenName;
 
     @Enumerated(EnumType.STRING)
     private StatusIdea status;
@@ -138,5 +139,13 @@ public class MoreIdea {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getKaizenName() {
+        return kaizenName;
+    }
+
+    public void setKaizenName(String kaizenName) {
+        this.kaizenName = kaizenName;
     }
 }

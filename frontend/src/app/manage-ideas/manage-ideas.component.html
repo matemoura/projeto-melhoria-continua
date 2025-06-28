@@ -1,36 +1,58 @@
 <div class="manage-ideas-container">
-  <h2>Gerenciar Status das Ideias</h2>
+  <h2>Gerenciar Ideias</h2>
 
-  <div *ngIf="isLoading" class="feedback-message">Carregando...</div>
-  <div *ngIf="error" class="feedback-message error">{{ error }}</div>
+  <div class="search-container">
+    <input type="text" placeholder="Buscar por usuário ou título..." [(ngModel)]="searchTerm" (input)="onSearchChange()"/>
+    <select [(ngModel)]="selectedStatus" (change)="onSearchChange()">
+      <option value="">Todos os Status</option>
+      <option *ngFor="let status of statuses" [value]="status">{{ formatStatusForDisplay(status) }}</option>
+    </select>
+  </div>
 
-  <table *ngIf="!isLoading && !error">
-    <thead>
-      <tr>
-        <th>Usuário</th>
-        <th>Setor</th>
-        <th>Título da Ideia</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngIf="!ideas || ideas.length === 0">
-        <td colspan="4" style="text-align: center;">Nenhuma ideia para gerenciar.</td>
-      </tr>
-      <tr *ngFor="let idea of ideas">
-        <td>{{ idea.nomeUsuario }}</td>
-        <td>{{ idea.setor }}</td>
-        <td>{{ idea.titulo }}</td>
-        <td>
-          <select
-            [(ngModel)]="idea.newStatus"
-            (change)="updateStatus(idea)">
-            <option *ngFor="let status of statuses" [value]="status">
-              {{ formatStatusForDisplay(status) }}
-            </option>
-          </select>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div *ngIf="isLoading" class="feedback-message spinner">
+    Carregando ideias...
+  </div>
+
+  <div *ngIf="!isLoading && error" class="feedback-message error-message">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!isLoading && !error">
+    <table *ngIf="ideas.length > 0">
+      <thead>
+        <tr>
+          <th>Usuário</th>
+          <th>Setor</th>
+          <th>Sugestão Nome Kaizen</th>
+          <th>Nome Kaizen (Oficial)</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let idea of ideas">
+          <td>{{ idea.nomeUsuario }}</td>
+          <td>{{ idea.setor }}</td>
+          <td>{{ idea.kaizenNameSuggestion || 'Nenhuma' }}</td>
+          <td>
+            <input type="text" [(ngModel)]="idea.kaizenName" class="kaizen-name-input" placeholder="Definir nome oficial">
+          </td>
+          <td>
+            <select [(ngModel)]="idea.status">
+              <option *ngFor="let status of statuses" [value]="status">
+                {{ formatStatusForDisplay(status) }}
+              </option>
+            </select>
+          </td>
+          <td>
+            <button (click)="updateIdea(idea)" class="save-button">Salvar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="ideas.length === 0" class="feedback-message empty-message">
+      Nenhuma ideia encontrada com os filtros atuais.
+    </div>
+  </div>
 </div>

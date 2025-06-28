@@ -5,8 +5,8 @@
   </div>
 
   <div class="search-container">
-    <input type="text" placeholder="Buscar por nome..." [(ngModel)]="searchTerm" (input)="onSearch()"/>
-    <select [(ngModel)]="selectedStatus" (change)="onSearch()">
+    <input type="text" placeholder="Buscar por usuário ou nome Kaizen..." [(ngModel)]="searchTerm" (input)="onSearchChange()"/>
+    <select [(ngModel)]="selectedStatus" (change)="onSearchChange()">
       <option value="">Todos os Status</option>
       <option *ngFor="let status of statuses" [value]="status">{{ formatStatusForDisplay(status) }}</option>
     </select>
@@ -65,8 +65,13 @@
         </div>
 
         <div class="info-group" *ngIf="idea.nomeKaizen">
-          <strong>Nome Kaizen:</strong>
+          <strong>Sugestão de Nome para o Kaizen:</strong>
           <p>{{ idea.nomeKaizen }}</p>
+        </div>
+
+        <div class="info-group" *ngIf="idea.kaizenName">
+          <strong>Nome do Kaizen:</strong>
+          <p class="kaizen-name-official">{{ idea.kaizenName }}</p>
         </div>
         
       </div> <div class="idea-card-footer" *ngIf="idea.imageUrl">
@@ -82,4 +87,6 @@
         </div>
       </div>
       
-    </div> </div> </div>
+    </div> 
+  </div> 
+</div>

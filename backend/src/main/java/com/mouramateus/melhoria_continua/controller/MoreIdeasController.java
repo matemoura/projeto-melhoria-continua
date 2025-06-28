@@ -1,6 +1,7 @@
 package com.mouramateus.melhoria_continua.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mouramateus.melhoria_continua.dto.UpdateMoreIdeaDto;
 import com.mouramateus.melhoria_continua.dto.UpdateStatusRequest;
 import com.mouramateus.melhoria_continua.entities.MoreIdea;
 import com.mouramateus.melhoria_continua.enums.StatusIdea;
@@ -26,9 +27,9 @@ public class MoreIdeasController {
 
     @GetMapping
     public ResponseEntity<List<MoreIdea>> getAllIdeas(
-            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String term,
             @RequestParam(required = false) StatusIdea status) {
-        List<MoreIdea> ideas = moreIdeaService.getAllIdeas(name, status);
+        List<MoreIdea> ideas = moreIdeaService.getAllIdeas(term, status);
         return ResponseEntity.ok(ideas);
     }
 
@@ -66,6 +67,12 @@ public class MoreIdeasController {
             @PathVariable Long id,
             @RequestBody UpdateStatusRequest request) {
         MoreIdea updatedIdea = moreIdeaService.updateStatus(id, request.getStatus());
+        return ResponseEntity.ok(updatedIdea);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<MoreIdea> update(@PathVariable Long id, @RequestBody UpdateMoreIdeaDto dto) {
+        MoreIdea updatedIdea = moreIdeaService.update(id, dto);
         return ResponseEntity.ok(updatedIdea);
     }
 }

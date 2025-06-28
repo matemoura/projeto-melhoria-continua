@@ -7,16 +7,21 @@ export interface MoreIdeaRaw {
   nomeUsuario: string;
   emailUsuario?: string;
   setor: string;
-  titulo: string;
   descricaoProblema: string;
   possiveisSolucoes?: string;
   impactos?: string[];
   interference?: number;
   expectedImprovement?: number;
   kaizenNameSuggestion?: string;
+  kaizenName?: string;
   status: string;
   imageUrl: string;
   createdAt: string;
+}
+
+export interface UpdateMoreIdeaPayload {
+    status?: string;
+    kaizenName?: string;
 }
 
 @Injectable({
@@ -27,10 +32,10 @@ export class MoreIdeasService {
 
   constructor(private http: HttpClient) {}
 
-  loadIdeas(name?: string, status?: string): Observable<MoreIdeaRaw[]> {
+  loadIdeas(term?: string, status?: string): Observable<MoreIdeaRaw[]> {
     let params = new HttpParams();
-    if (name) {
-      params = params.append('name', name);
+    if (term) {
+      params = params.append('term', term);
     }
     if (status) {
       params = params.append('status', status);
@@ -48,5 +53,20 @@ export class MoreIdeasService {
 
   getImage(url: string): Observable<Blob> {
     return this.http.get(url, { responseType: 'blob' });
+  }
+
+  getIdeas(term: string = '', status: string = ''): Observable<MoreIdeaRaw[]> {
+    let params = new HttpParams();
+    if (term) {
+      params = params.append('term', term);
+    }
+    if (status) {
+      params = params.append('status', status);
+    }
+    return this.http.get<MoreIdeaRaw[]>(this.apiUrl, { params });
+  }
+
+  updateIdea(id: number, payload: UpdateMoreIdeaPayload): Observable<MoreIdeaRaw> {
+    return this.http.patch<MoreIdeaRaw>(`${this.apiUrl}/${id}`, payload);
   }
 }
