@@ -12,22 +12,12 @@
     <li><a routerLink="/more-ideas/list">📋 Ver Ideias</a></li>
 
     <ng-container *ngIf="authService.isLoggedIn$ | async">
-      <li><a routerLink="/manage-ideas">📊 Gerenciar Ideias</a></li>
-    </ng-container>
-
-    <li><a routerLink="/gap-analysis">📈 Análise de GAP</a></li>
-
-    <ng-container *ngIf="authService.isLoggedIn$ | async">
-      <li><a routerLink="/manage-goals">⚙️ Gerenciar Metas</a></li>
-    </ng-container>
-
-    <ng-container *ngIf="authService.isLoggedIn$ | async">
-      <li><a routerLink="/audit/new">📝 Nova Auditoria 5S</a></li>
-    </ng-container>
-
-    <li><a routerLink="/audit/ranking">🏆 Ranking 5S</a></li>
-
-    <ng-container *ngIf="authService.isLoggedIn$ | async">
+      <li *ngIf="authService.hasAnyRole(['melhoria continua', 'admin'])"><a routerLink="/manage-ideas">📊 Gerenciar Ideias</a></li>
+      <li><a routerLink="/gap-analysis">📈 Análise de GAP</a></li>
+      <li *ngIf="authService.hasAnyRole(['melhoria continua', 'admin'])"><a routerLink="/manage-goals">⚙️ Gerenciar Metas</a></li>
+      <li *ngIf="authService.hasAnyRole(['comitê do 5S', 'melhoria continua', 'admin'])"><a routerLink="/audit/new">📝 Nova Auditoria 5S</a></li>
+      <li><a routerLink="/audit/ranking">🏆 Ranking 5S</a></li>
+      <li *ngIf="authService.hasRole('admin')"><a routerLink="/manage-users">👥 Gerenciar Usuários</a></li>
       <li><a (click)="logout()" style="cursor: pointer;">↪️ Logout</a></li>
     </ng-container>
 

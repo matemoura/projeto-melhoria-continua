@@ -3,6 +3,7 @@ package com.mouramateus.melhoria_continua.config;
 import com.mouramateus.melhoria_continua.entities.User;
 import com.mouramateus.melhoria_continua.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,7 +25,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         List<org.springframework.security.core.GrantedAuthority> authorities = new ArrayList<>();
 
-        authorities.add(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getProfile()));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getProfile().toUpperCase()));
 
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
     }

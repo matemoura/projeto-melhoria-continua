@@ -76,7 +76,7 @@ export class AuditFormComponent {
         formData.append('imagem', this.selectedFile);
       }
 
-      this.auditService.submitAudit(formData).subscribe({
+      this.auditService.saveAudit(formData).subscribe({
         next: (response: any) => {
           alert('Auditoria enviada com sucesso!');
           this.router.navigate(['/']);

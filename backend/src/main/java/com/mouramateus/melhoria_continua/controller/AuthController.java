@@ -31,4 +31,24 @@ public class AuthController {
         Map<String, String> response = authService.login(email, password);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> body) {
+        try {
+            authService.generatePasswordResetToken(body.get("email"));
+            return ResponseEntity.ok(Map.of("message", "Se o email estiver cadastrado, um link para redefinição de senha foi enviado."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.ok(Map.of("message", "Se o email estiver cadastrado, um link para redefinição de senha foi enviado."));
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> body) {
+        try {
+            authService.resetPassword(body.get("token"), body.get("password"));
+            return ResponseEntity.ok(Map.of("message", "Senha redefinida com sucesso."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
 }

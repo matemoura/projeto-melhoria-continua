@@ -2,6 +2,7 @@ package com.mouramateus.melhoria_continua.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,14 +31,20 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/auth/**",
+                                "/api/auth/register",
+                                "/api/auth/login",
+                                "/api/auth/forgot-password",
+                                "/api/auth/reset-password",
                                 "/api/more-ideas/**",
                                 "/api/audit/ranking/**",
                                 "/api/gap-analysis/goals/{year}",
                                 "/api/gap-analysis/ideas-count/{year}",
                                 "/uploads/**"
                         ).permitAll()
-                        .requestMatchers("/api/audit/criar", "/api/more-ideas/{id}/status", "/api/gap-analysis/goals").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/more-ideas").permitAll() // Permitir envio de ideias
+                        .requestMatchers("/api/audit/new").hasAnyRole("COMITE_5S", "MELHORIA_CONTINUA", "ADMIN")
+                        .requestMatchers("/api/manage-ideas", "/api/manage-goals").hasAnyRole("MELHORIA_CONTINUA", "ADMIN")
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 );
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

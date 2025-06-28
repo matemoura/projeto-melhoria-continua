@@ -1,0 +1,33 @@
+<div class="manage-users-container">
+  <h2>Gerenciar Perfis de Usuário</h2>
+
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Perfil Atual</th>
+        <th>Novo Perfil</th>
+        <th>Ação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.profile }}</td>
+        <td>
+          <select [(ngModel)]="selectedProfile[user.id]">
+            <option *ngFor="let profile of profiles" [value]="profile">{{ profile }}</option>
+          </select>
+        </td>
+        <td>
+          <button (click)="updateProfile(user.id)" class="button-update">Salvar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

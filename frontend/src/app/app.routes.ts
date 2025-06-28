@@ -9,17 +9,43 @@ import { LoginComponent } from './login/login.component';
 import { authGuard } from './core/guards/auth.guard';
 import { GapAnalysisComponent } from './gap-analysis/gap-analysis.component';
 import { ManageGoalsComponent } from './manage-goals/manage-goals-component';
+import { ManageUsersComponent } from './manage-users/manage-users.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'more-ideas/new', component: MoreIdeasFormComponent },
   { path: 'more-ideas/list', component: MoreIdeasListComponent },
-  { path: 'manage-ideas', component: ManageIdeasComponent, canActivate: [authGuard] },
+  {
+    path: 'manage-ideas',
+    component: ManageIdeasComponent,
+    canActivate: [authGuard],
+    data: { roles: ['melhoria continua', 'admin'] }
+  },
   { path: 'gap-analysis', component: GapAnalysisComponent },
-  { path: 'manage-goals', component: ManageGoalsComponent, canActivate: [authGuard] },
-  { path: 'audit/new', component: AuditFormComponent , canActivate: [authGuard] },
+  {
+    path: 'manage-goals',
+    component: ManageGoalsComponent,
+    canActivate: [authGuard],
+    data: { roles: ['melhoria continua', 'admin'] }
+  },
+  {
+    path: 'audit/new',
+    component: AuditFormComponent,
+    canActivate: [authGuard],
+    data: { roles: ['comitê do 5S', 'melhoria continua', 'admin'] }
+  },
   { path: 'audit/ranking', component: AuditRankingComponent },
+  {
+    path: 'manage-users',
+    component: ManageUsersComponent,
+    canActivate: [authGuard],
+    data: { roles: ['admin'] }
+  },
   { path: '**', redirectTo: '/home' }
 ];

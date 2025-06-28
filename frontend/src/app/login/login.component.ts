@@ -1,13 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule 
+  ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -31,7 +35,7 @@ export class LoginComponent implements OnInit {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
-      name: [''] // usado no modo de cadastro
+      name: [''] 
     });
   }
 
@@ -59,7 +63,6 @@ export class LoginComponent implements OnInit {
     if (this.isLoginMode) {
       this.authService.login({ email, password }).subscribe({
         next: res => {
-          this.authService.saveToken(res.token);
           this.router.navigate(['/']);
         },
         error: () => {
@@ -70,7 +73,6 @@ export class LoginComponent implements OnInit {
     } else {
       this.authService.register({ email, password, name }).subscribe({
         next: res => {
-          this.authService.saveToken(res.token);
           this.router.navigate(['/']);
         },
         error: () => {

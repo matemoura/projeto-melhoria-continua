@@ -2,6 +2,8 @@ package com.mouramateus.melhoria_continua.entities;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -12,6 +14,8 @@ public class User {
     private String email;
     private String password;
     private String profile;
+    private String resetToken;
+    private LocalDateTime resetTokenExpiryDate;
 
     public User() {
     }
@@ -61,5 +65,21 @@ public class User {
 
     public void setProfile(String profile) {
         this.profile = profile;
+    }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    public LocalDateTime getResetTokenExpiryDate() {
+        return resetTokenExpiryDate;
+    }
+
+    public void setResetTokenExpiryDate(LocalDateTime resetTokenExpiryDate) {
+        this.resetTokenExpiryDate = resetTokenExpiryDate;
     }
 }

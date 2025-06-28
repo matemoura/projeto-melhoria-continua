@@ -1,19 +1,18 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuditService {
-  private http = inject(HttpClient);
-  private readonly baseUrl = 'http://localhost:8080/api/audit';
+  private readonly API_BASE_URL = 'http://localhost:8080/api/audit';
 
-  submitAudit(formData: FormData): Observable<any> {
-    const token = localStorage.getItem('token');  
+  constructor(private http: HttpClient) { }
 
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
+  saveAudit(auditData: any): Observable<any> {
+    return this.http.post(`${this.API_BASE_URL}/new`, auditData);
+  }
 
-    return this.http.post<any>(`${this.baseUrl}/criar`, formData, { headers });
+  getRanking(): Observable<any> {
+    return this.http.get(`${this.API_BASE_URL}/ranking`);
   }
 }

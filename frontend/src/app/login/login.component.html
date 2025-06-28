@@ -28,6 +28,10 @@
       </div>
     </div>
 
+    <div class="form-footer">
+      <a routerLink="/forgot-password" class="forgot-password-link">Esqueceu a senha?</a>
+    </div>
+
     <button type="submit" [disabled]="loading || form.invalid" class="login-button button">
       <span *ngIf="!loading">{{ isLoginMode ? 'Entrar' : 'Cadastrar' }}</span>
       <span *ngIf="loading">Aguarde...</span>
