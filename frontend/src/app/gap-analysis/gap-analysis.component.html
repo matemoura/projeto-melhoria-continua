@@ -1,38 +1,75 @@
 <div class="container">
-  <div class="table-container card">
-    <table *ngIf="!isLoading && !errorMessage">
+  <h2>📊 Análise de GAP de Ideias</h2>
+  
+  <div class="filter-controls card">
+    <div class="form-group">
+      <label for="year-input">Digite o Ano para Consultar:</label>
+      <div class="search-wrapper">
+        <input 
+          id="year-input" 
+          type="number" 
+          [(ngModel)]="searchYear" 
+          placeholder="Ex: 2025"
+          (keyup.enter)="onSearch()"
+          class="form-control">
+        <button (click)="onSearch()" class="button" [disabled]="isLoading">
+          {{ isLoading ? 'Buscando...' : 'Buscar' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="form-check" *ngIf="isCurrentYear && hasSearched && !isLoading">
+      <input type="checkbox" id="filter-month" [(ngModel)]="filterUpToCurrentMonth" class="form-check-input">
+      <label for="filter-month">Mostrar somente até o mês atual</label>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-message">Carregando dados...</div>
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+
+  <div class="table-container card" *ngIf="hasSearched && !isLoading && !errorMessage && gapData.length > 0">
+    <h3>Resultados para o ano de {{ searchYear }}</h3>
+    <table>
       <thead>
         <tr>
           <th class="sector-col">Setor</th>
-          <th *ngFor="let month of displayedMonths" class="month-col">{{ month.name | titlecase }}</th>
+          <ng-container *ngFor="let month of allMonths">
+            <th class="month-col" *ngIf="!isCurrentYear || !filterUpToCurrentMonth || month.id <= currentMonth">
+              {{ month.name | titlecase }}
+            </th>
+          </ng-container>
           <th class="total-col">Total</th>
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngFor="let data of gapData">
-          <tr>
-            <td class="sector-name">{{ data.sector }}</td>
-            <td *ngFor="let month of data.monthlyData" [hidden]="!isMonthDisplayed(month.month)">
+        <tr *ngFor="let data of gapData">
+          <td class="sector-name">{{ data.sector }}</td>
+          <ng-container *ngFor="let monthData of data.monthlyData">
+            <td *ngIf="!isCurrentYear || !filterUpToCurrentMonth || monthData.month <= currentMonth">
               <div class="cell-data">
-                <span class="value goal">{{ month.goal }}</span>
-                <span class="value realized">{{ month.realized }}</span>
-                <span class="value gap" [ngClass]="{'positive-gap': month.gap >= 0, 'negative-gap': month.gap < 0}">
-                  {{ month.gap }}
+                <span class="value goal" title="Meta">{{ monthData.goal }}</span>
+                <span class="value realized" title="Realizado">{{ monthData.realized }}</span>
+                <span class="value gap" title="GAP" [ngClass]="{'positive-gap': monthData.gap >= 0, 'negative-gap': monthData.gap < 0}">
+                  {{ monthData.gap }}
                 </span>
               </div>
             </td>
-            <td [hidden]="!isMonthDisplayed(12)">
-              <div class="cell-data">
-                <span class="value goal">{{ data.totalGoal }}</span>
-                <span class="value realized">{{ data.totalRealized }}</span>
-                <span class="value gap" [ngClass]="{'positive-gap': data.totalGap >= 0, 'negative-gap': data.totalGap < 0}">
-                  {{ data.totalGap }}
-                </span>
-              </div>
-            </td>
-          </tr>
-        </ng-container>
+          </ng-container>
+          <td class="total-col">
+            <div class="cell-data">
+              <span class="value goal" title="Meta Total">{{ data.totalGoal }}</span>
+              <span class="value realized" title="Realizado Total">{{ data.totalRealized }}</span>
+              <span class="value gap" title="GAP Total" [class.positive-gap]="data.totalGap >= 0" [class.negative-gap]="data.totalGap < 0">
+                {{ data.totalGap }}
+              </span>
+            </div>
+          </td>
+        </tr>
       </tbody>
-      </table>
+    </table>
   </div>
+
+  <div class="info-message" *ngIf="hasSearched && !isLoading && !errorMessage && gapData.length === 0">
+    Nenhum dado encontrado para o ano de {{ searchYear }}. Você pode definir novas metas na tela de gerenciamento.
   </div>
+</div>

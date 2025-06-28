@@ -5,7 +5,7 @@
   </div>
 
   <div class="search-container">
-    <input type="text" placeholder="Buscar por usuário ou nome Kaizen..." [(ngModel)]="searchTerm" (input)="onSearchChange()"/>
+    <input type="text" placeholder="Buscar por usuário ou nome do Kaizen..." [(ngModel)]="searchTerm" (input)="onSearchChange()"/>
     <select [(ngModel)]="selectedStatus" (change)="onSearchChange()">
       <option value="">Todos os Status</option>
       <option *ngFor="let status of statuses" [value]="status">{{ formatStatusForDisplay(status) }}</option>

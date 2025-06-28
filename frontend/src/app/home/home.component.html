@@ -23,10 +23,11 @@
     <section class="section-margin-top">
       <h2>📈 Metas e Análises</h2>
       <p class="section-description">
-        Defina metas de envio de ideias e acompanhe o desempenho dos setores.
+        Acompanhe o desempenho dos setores ou defina metas de envio de ideias.
       </p>
       <div class="home-links">
-        <a routerLink="/gap-analysis" class="button">📊 Acompanhar Metas de Ideias</a>
+        <a routerLink="/gap-analysis" class="button">📊 Acompanhar Metas</a>
+        <a *ngIf="authService.isLoggedIn$ | async" routerLink="/manage-goals" class="button">⚙️ Gerenciar Metas</a>
       </div>
     </section>
 

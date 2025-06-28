@@ -18,6 +18,10 @@
     <li><a routerLink="/gap-analysis">📈 Análise de GAP</a></li>
 
     <ng-container *ngIf="authService.isLoggedIn$ | async">
+      <li><a routerLink="/manage-goals">⚙️ Gerenciar Metas</a></li>
+    </ng-container>
+
+    <ng-container *ngIf="authService.isLoggedIn$ | async">
       <li><a routerLink="/audit/new">📝 Nova Auditoria 5S</a></li>
     </ng-container>
 

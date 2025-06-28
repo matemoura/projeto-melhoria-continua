@@ -1,72 +1,71 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MoreIdeasService, MoreIdeaRaw } from '../services/more-ideas.service';
 import { FormsModule } from '@angular/forms';
+import { GapAnalysisService, GapData } from '../services/gap-analysis.service';
 
-interface ManagedIdea {
+interface MonthDisplay {
   id: number;
-  nomeUsuario: string;
-  setor: string;
-  titulo: string;
-  descricaoProblema: string;
-  status: string;
-  newStatus?: string;
+  name: string;
 }
 
 @Component({
-  selector: 'app-manage-ideas',
+  selector: 'app-gap-analysis',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './manage-ideas.component.html',
-  styleUrls: ['./manage-ideas.component.css']
+  templateUrl: './gap-analysis.component.html',
+  styleUrls: ['./gap-analysis.component.css']
 })
-export class ManageIdeasComponent implements OnInit {
+export class GapAnalysisComponent implements OnInit {
 
-  ideas: ManagedIdea[] = [];
-  statuses = ['PENDENTE', 'EM_ANALISE', 'APROVADA', 'REJEITADA', 'AGUARDANDO_A_IMPLEMENTACAO', 'IMPLEMENTADA'];
-  isLoading = true;
-  error = '';
+  private gapAnalysisService = inject(GapAnalysisService);
 
-  constructor(private moreIdeasService: MoreIdeasService) { }
+  isLoading = false;
+  errorMessage = '';
+  hasSearched = false;
+
+  gapData: GapData[] = [];
+  searchYear: number = new Date().getFullYear();
+  
+  isCurrentYear = false;
+  filterUpToCurrentMonth = true;
+  readonly currentMonth = new Date().getMonth() + 1; 
+
+  allMonths: MonthDisplay[] = [
+    { id: 1, name: 'Jan' }, { id: 2, name: 'Fev' }, { id: 3, name: 'Mar' },
+    { id: 4, name: 'Abr' }, { id: 5, name: 'Mai' }, { id: 6, name: 'Jun' },
+    { id: 7, name: 'Jul' }, { id: 8, name: 'Ago' }, { id: 9, name: 'Set' },
+    { id: 10, name: 'Out' }, { id: 11, name: 'Nov' }, { id: 12, name: 'Dez' }
+  ];
 
   ngOnInit(): void {
-    this.loadIdeas();
   }
 
-  loadIdeas(): void {
+  onSearch(): void {
+    if (!this.searchYear) {
+      this.errorMessage = 'Por favor, insira um ano válido.';
+      return;
+    }
+
     this.isLoading = true;
-    this.moreIdeasService.loadIdeas().subscribe({
-      next: (data: MoreIdeaRaw[]) => {
-        this.ideas = data.map(idea => ({
-          ...idea,
-          newStatus: idea.status
-        }));
+    this.hasSearched = true;
+    this.errorMessage = '';
+    this.gapData = [];
+
+    this.isCurrentYear = (this.searchYear === new Date().getFullYear());
+    if (this.isCurrentYear) {
+        this.filterUpToCurrentMonth = true;
+    }
+
+    this.gapAnalysisService.getGapAnalysisData(this.searchYear).subscribe({
+      next: (data) => {
+        this.gapData = data;
         this.isLoading = false;
       },
       error: (err) => {
-        this.error = 'Falha ao carregar as ideias.';
+        this.errorMessage = 'Falha ao carregar os dados. O serviço pode estar indisponível ou não há dados para este ano.';
         this.isLoading = false;
         console.error(err);
       }
     });
-  }
-
-  updateStatus(idea: ManagedIdea): void {
-    if (idea.newStatus && idea.status !== idea.newStatus) {
-      this.moreIdeasService.updateStatus(idea.id, idea.newStatus).subscribe({
-        next: () => {
-          idea.status = idea.newStatus!;
-        },
-        error: (err) => {
-          console.error('Falha ao atualizar o status', err);
-          idea.newStatus = idea.status;
-        }
-      });
-    }
-  }
-
-  formatStatusForDisplay(status: string): string {
-    if (!status) return 'Pendente';
-    return status.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
   }
 }

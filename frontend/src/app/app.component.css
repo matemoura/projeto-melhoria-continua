@@ -84,10 +84,6 @@
 .main-content {
   flex-grow: 1;
   padding: 25px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
 }
 
 .main-footer {
@@ -97,6 +93,7 @@
   border-top: 1px solid #e0e7ff;
   font-size: 0.9em;
   color: #556;
+  flex-shrink: 0;
 }
 
 @media (max-width: 992px) { 
