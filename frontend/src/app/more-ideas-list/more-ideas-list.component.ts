@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { Subject, Subscription, combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged, startWith, switchMap } from 'rxjs/operators';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import * as XLSX from 'xlsx';
+import { AuthService } from '../services/auth.service';
 
 interface IdeaUI {
   id: number;
@@ -46,9 +48,13 @@ export class MoreIdeasListComponent implements OnInit, OnDestroy {
   private statusSubject = new Subject<string>();
   private ideasSubscription!: Subscription;
 
+  private readonly backendUrl = 'http://localhost:8080';
+  private imageBlobs: Map<number, Blob> = new Map();
+
   constructor(
     private moreIdeasService: MoreIdeasService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    public authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -66,7 +72,8 @@ export class MoreIdeasListComponent implements OnInit, OnDestroy {
         this.ideas = data.map(idea => ({
           ...idea,
           nomeKaizen: idea.kaizenNameSuggestion, 
-          expectativaMelhoria: idea.expectedImprovement
+          expectativaMelhoria: idea.expectedImprovement,
+          interferencia: idea.interference
         }));
         this.isLoading = false;
         this.loadError = '';
@@ -94,8 +101,11 @@ export class MoreIdeasListComponent implements OnInit, OnDestroy {
   loadImages(): void {
     this.ideas.forEach(idea => {
       if (idea.imageUrl && !idea.imageBlobUrl) {
-        this.moreIdeasService.getImage(idea.imageUrl).subscribe({
+        const fullImageUrl = `${this.backendUrl}${idea.imageUrl}`;
+        this.moreIdeasService.getImage(fullImageUrl).subscribe({
           next: (blob) => {
+            this.imageBlobs.set(idea.id, blob); 
+            
             const objectUrl = URL.createObjectURL(blob);
             idea.imageBlobUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
           },
@@ -107,12 +117,60 @@ export class MoreIdeasListComponent implements OnInit, OnDestroy {
     });
   }
 
-  downloadImage(event: Event, idea: IdeaUI): void {
-    event.preventDefault();
+  downloadImage(event: MouseEvent, idea: IdeaUI): void {
+    event.preventDefault(); 
+    
+    const blob = this.imageBlobs.get(idea.id);
+    
+    if (blob && idea.imageUrl) {
+      const a = document.createElement('a');
+      const objectUrl = URL.createObjectURL(blob);
+      a.href = objectUrl;
+      a.download = idea.imageUrl.split('/').pop() || 'anexo'; 
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(objectUrl);
+    }
   }
 
   formatStatusForDisplay(status: string): string {
     if (!status) return 'Pendente';
     return status.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  exportToExcel(): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.ideas.map(idea => {
+      return {
+        'ID': idea.id,
+        'Usuário': idea.nomeUsuario,
+        'E-mail': idea.emailUsuario,
+        'Setor': idea.setor,
+        'Status': this.formatStatusForDisplay(idea.status),
+        'Problema': idea.descricaoProblema,
+        'Soluções Sugeridas': idea.possiveisSolucoes,
+        'Interferência nas Atividades': idea.interferencia,
+        'Expectativa de Melhoria': idea.expectativaMelhoria,
+        'Sugestão Kaizen': idea.kaizenNameSuggestion,
+        'Nome Oficial Kaizen': idea.kaizenName,
+        'Impactos': idea.impactos?.join(', '),
+        'Data de Envio': new Date(idea.createdAt).toLocaleDateString()
+      };
+    }));
+    const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    this.saveAsExcelFile(excelBuffer, 'lista_de_ideias');
+  }
+
+  private saveAsExcelFile(buffer: any, fileName: string): void {
+    const data: Blob = new Blob([buffer], {type: 'application/octet-stream'});
+    const url: string = window.URL.createObjectURL(data);
+    const a: HTMLAnchorElement = document.createElement('a');
+    a.href = url;
+    a.download = `${fileName}_${new Date().getTime()}.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
   }
 }

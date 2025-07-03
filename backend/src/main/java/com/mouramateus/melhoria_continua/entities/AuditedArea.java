@@ -62,6 +62,14 @@ public class AuditedArea {
         this.seiso = seiso;
     }
 
+    public Integer getSeiketsu() {
+        return seiketsu;
+    }
+
+    public void setSeiketsu(Integer seiketsu) {
+        this.seiketsu = seiketsu;
+    }
+
     public Integer getShitsuke() {
         return shitsuke;
     }

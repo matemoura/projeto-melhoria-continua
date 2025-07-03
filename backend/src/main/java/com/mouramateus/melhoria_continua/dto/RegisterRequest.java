@@ -4,6 +4,7 @@ public class RegisterRequest {
     private String name;
     private String email;
     private String password;
+    private Long setorId;
 
     public String getName() {
         return name;
@@ -27,5 +28,13 @@ public class RegisterRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Long getSetorId() {
+        return setorId;
+    }
+
+    public void setSetorId(Long setorId) {
+        this.setorId = setorId;
     }
 }

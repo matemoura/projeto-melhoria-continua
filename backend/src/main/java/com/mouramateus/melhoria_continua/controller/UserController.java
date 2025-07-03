@@ -1,5 +1,6 @@
 package com.mouramateus.melhoria_continua.controller;
 
+import com.mouramateus.melhoria_continua.dto.UserUpdateRequest;
 import com.mouramateus.melhoria_continua.entities.User;
 import com.mouramateus.melhoria_continua.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -24,11 +24,10 @@ public class UserController {
         return ResponseEntity.ok(userService.findAll());
     }
 
-    @PutMapping("/{id}/profile")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<User> updateUserProfile(@PathVariable Long id, @RequestBody Map<String, String> body) {
-        String profile = body.get("profile");
-        User updatedUser = userService.updateProfile(id, profile);
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MELHORIA_CONTINUA')")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
+        User updatedUser = userService.updateUser(id, request);
         return ResponseEntity.ok(updatedUser);
     }
 }

@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Sector } from '../models/sector.model';
 
 export interface LoginRequest {
   email: string;
@@ -12,6 +13,7 @@ export interface RegisterRequest {
   name: string;
   email: string;
   password: string;
+  setorId?: number;
 }
 
 export interface LoginResponse {
@@ -19,16 +21,25 @@ export interface LoginResponse {
   name: string;
   profile: string;
   id: number;
+  setor?: Sector;
+}
+
+export interface CurrentUser {
+    name: string;
+    email: string;
+    profile: string;
+    setor: Sector | null; 
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
   private readonly API_BASE_URL = 'http://localhost:8080/api';
-  private readonly LOGIN_URL = `${this.API_BASE_URL}/auth/login`;
-  private readonly REGISTER_URL = `${this.API_BASE_URL}/auth/register`;
-  private readonly tokenKey = 'token';
+  private readonly LOGIN_URL = `${this.API_BASE_URL}/auth/login`;
+  private readonly REGISTER_URL = `${this.API_BASE_URL}/auth/register`;
+  private readonly tokenKey = 'token';
   private readonly profileKey = 'profile';
+  private readonly sectorKey = 'sector';
   private readonly FORGOT_PASSWORD_URL = `${this.API_BASE_URL}/auth/forgot-password`;
   private readonly RESET_PASSWORD_URL = `${this.API_BASE_URL}/auth/reset-password`;
 
@@ -43,6 +54,7 @@ export class AuthService {
       tap(response => {
         this.saveToken(response.token);
         this.saveProfile(response.profile);
+        this.saveSector(response.setor);
       })
     );
   }
@@ -52,6 +64,7 @@ export class AuthService {
       tap(response => {
         this.saveToken(response.token);
         this.saveProfile(response.profile);
+        this.saveSector(response.setor);
       })
     );
   }
@@ -74,6 +87,14 @@ export class AuthService {
     this._userProfile$.next(profile);
   }
 
+  saveSector(sector: Sector | undefined): void {
+    if (sector) {
+      localStorage.setItem(this.sectorKey, JSON.stringify(sector));
+    } else {
+      localStorage.removeItem(this.sectorKey);
+    }
+  }
+
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
   }
@@ -82,9 +103,21 @@ export class AuthService {
     return localStorage.getItem(this.profileKey);
   }
 
+  getSector(): Sector | null {
+      const sectorStr = localStorage.getItem(this.sectorKey);
+      if (!sectorStr) return null;
+
+      try {
+          return JSON.parse(sectorStr) as Sector;
+      } catch {
+          return null;
+      }
+  }
+
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.profileKey);
+    localStorage.removeItem(this.sectorKey);
     this._isLoggedIn$.next(false);
     this._userProfile$.next(null);
   }
@@ -111,9 +144,10 @@ export class AuthService {
     this._userProfile$.next(this.getProfile());
   }
 
-  getCurrentUser(): { name: string; email: string, profile: string } | null {
+  getCurrentUser(): CurrentUser | null {
     const token = this.getToken();
     const profile = this.getProfile();
+    const sector = this.getSector();
     if (!token || !profile) return null;
 
     try {
@@ -121,7 +155,8 @@ export class AuthService {
       return {
         name: payload.name || '',
         email: payload.sub || '',
-        profile: profile
+        profile: profile,
+        setor: sector 
       };
     } catch {
       return null;

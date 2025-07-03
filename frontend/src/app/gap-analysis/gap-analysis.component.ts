@@ -37,6 +37,8 @@ export class GapAnalysisComponent implements OnInit {
     { id: 10, name: 'Out' }, { id: 11, name: 'Nov' }, { id: 12, name: 'Dez' }
   ];
 
+  private originalGapData: GapData[] = [];
+
   ngOnInit(): void {
   }
 
@@ -58,7 +60,8 @@ export class GapAnalysisComponent implements OnInit {
 
     this.gapAnalysisService.getGapAnalysisData(this.searchYear).subscribe({
       next: (data) => {
-        this.gapData = data;
+        this.originalGapData = JSON.parse(JSON.stringify(data)); // Cópia profunda dos dados
+        this.updateGapDataTotals();
         this.isLoading = false;
       },
       error: (err) => {
@@ -66,6 +69,30 @@ export class GapAnalysisComponent implements OnInit {
         this.isLoading = false;
         console.error(err);
       }
+    });
+  }
+  
+  onFilterChange(): void {
+    this.updateGapDataTotals();
+  }
+
+  private updateGapDataTotals(): void {
+    if (!this.originalGapData) return;
+
+    this.gapData = this.originalGapData.map(data => {
+      const monthlyDataToSum = this.isCurrentYear && this.filterUpToCurrentMonth
+        ? data.monthlyData.slice(0, this.currentMonth)
+        : data.monthlyData;
+        
+      const totalGoal = monthlyDataToSum.reduce((acc, month) => acc + month.goal, 0);
+      const totalRealized = monthlyDataToSum.reduce((acc, month) => acc + month.realized, 0);
+
+      return {
+        ...data,
+        totalGoal,
+        totalRealized,
+        totalGap: totalRealized - totalGoal
+      };
     });
   }
 }

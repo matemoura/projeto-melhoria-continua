@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { SectorService } from '../services/sector.service';
+import { Sector } from '../models/sector.model';
 
 @Component({
   selector: 'app-login',
@@ -20,22 +22,32 @@ export class LoginComponent implements OnInit {
   loading = false;
   error = '';
   isLoginMode = true;
+  availableSectors: Sector[] = [];
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private sectorService: SectorService
   ) {}
 
   ngOnInit(): void {
     this.initForm();
+    this.loadSectors();
+  }
+
+  loadSectors() {
+    this.sectorService.sectors$.subscribe(sectors => {
+      this.availableSectors = sectors;
+    });
   }
 
   initForm() {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
-      name: [''] 
+      name: [''] ,
+      setorId: [null]
     });
   }
 
@@ -44,21 +56,29 @@ export class LoginComponent implements OnInit {
     this.isLoginMode = !this.isLoginMode;
 
     const nameControl = this.form.get('name');
+    const setorControl = this.form.get('setorId');
+
     if (this.isLoginMode) {
       nameControl?.clearValidators();
+      setorControl?.clearValidators(); 
     } else {
       nameControl?.setValidators(Validators.required);
+      setorControl?.setValidators(Validators.required); 
     }
     nameControl?.updateValueAndValidity();
+    setorControl?.updateValueAndValidity();
   }
 
   submit() {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
     this.loading = true;
     this.error = '';
 
-    const { email, password, name } = this.form.value;
+    const { email, password, name, setorId } = this.form.value;
 
     if (this.isLoginMode) {
       this.authService.login({ email, password }).subscribe({
@@ -71,7 +91,7 @@ export class LoginComponent implements OnInit {
         }
       });
     } else {
-      this.authService.register({ email, password, name }).subscribe({
+      this.authService.register({ email, password, name, setorId }).subscribe({
         next: res => {
           this.router.navigate(['/']);
         },

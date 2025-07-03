@@ -1,31 +1,26 @@
 package com.mouramateus.melhoria_continua.config;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
-
-    private static final Logger logger = LoggerFactory.getLogger(JwtRequestFilter.class);
-
-    @Autowired
-    private UserDetailsService userDetailsService;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -44,27 +39,28 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
-                logger.error("Não foi possível obter o token JWT", e);
+                logger.error("Unable to get JWT Token", e);
             } catch (ExpiredJwtException e) {
-                logger.warn("Token JWT expirado", e);
-            } catch (MalformedJwtException e) {
-                logger.warn("Token JWT malformado", e);
-            } catch (Exception e) {
-                logger.error("Erro ao processar o token JWT", e);
+                logger.warn("JWT Token has expired", e);
             }
-        } else if (requestTokenHeader != null) {
-            logger.warn("O token JWT não começa com a palavra 'Bearer'");
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            Claims claims = jwtTokenUtil.getAllClaimsFromToken(jwtToken);
 
-            if (jwtToken != null && jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-                UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authenticationToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            @SuppressWarnings("unchecked")
+            List<String> roles = claims.get("roles", List.class);
+            List<SimpleGrantedAuthority> authorities = roles.stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
+
+            UserDetails userDetails = new org.springframework.security.core.userdetails.User(username, "", authorities);
+
+            if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
 

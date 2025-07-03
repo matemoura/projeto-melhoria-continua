@@ -1,6 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, forkJoin, map } from 'rxjs';
+import { Observable, forkJoin, map, switchMap, of } from 'rxjs';
+import { SectorService } from './sector.service';
+import { Sector } from '../models/sector.model';
 
 export interface MonthlyData {
   month: number;
@@ -34,7 +36,10 @@ type IdeasCountResponse = Record<string, Record<number, number>>;
 export class GapAnalysisService {
   private apiUrl = 'http://localhost:8080/api/gap-analysis';
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private sectorService: SectorService
+  ) { }
 
   private getGoals(year: number): Observable<Goal[]> {
     return this.http.get<Goal[]>(`${this.apiUrl}/goals/${year}`);
@@ -45,43 +50,53 @@ export class GapAnalysisService {
   }
 
   getGapAnalysisData(year: number): Observable<GapData[]> {
-    return forkJoin({
-      goals: this.getGoals(year),
-      ideasCount: this.getIdeasCount(year)
-    }).pipe(
-      map(response => {
-        const { goals, ideasCount } = response;
-        const sectors = ["Comercial", "Desenvolvimento", "Financeiro", "Marketing", "Produção", "Qualidade", "RH"];
-        
-        const processedData: GapData[] = sectors.map(sector => {
-          let totalGoal = 0;
-          let totalRealized = 0;
+    return this.sectorService.sectors$.pipe(
+      switchMap((sectors: Sector[]) => {
+        if (sectors.length === 0) {
+          return of<GapData[]>([]);
+        }
 
-          const monthlyData: MonthlyData[] = Array.from({ length: 12 }, (_, i) => {
-            const month = i + 1;
+        const data$: Observable<GapData[]> = forkJoin({
+          goals: this.getGoals(year),
+          ideasCount: this.getIdeasCount(year)
+        }).pipe(
+          map(response => {
+            const { goals, ideasCount } = response;
+            const sectorNames = sectors.map(s => s.name);
             
-            const goalObj = goals.find(g => g.sector === sector && g.month === month);
-            const goal = goalObj ? goalObj.goal : 0;
+            const processedData: GapData[] = sectorNames.map(sector => {
+              let totalGoal = 0;
+              let totalRealized = 0;
 
-            const realized = ideasCount[sector]?.[month] ?? 0;
-            const gap = realized - goal;
+              const monthlyData: MonthlyData[] = Array.from({ length: 12 }, (_, i) => {
+                const month = i + 1;
+                
+                const goalObj = goals.find(g => g.sector === sector && g.month === month);
+                const goal = goalObj ? goalObj.goal : 0;
 
-            totalGoal += goal;
-            totalRealized += realized;
+                const realized = ideasCount[sector]?.[month] ?? 0;
+                const gap = realized - goal;
 
-            return { month, goal, realized, gap };
-          });
+                totalGoal += goal;
+                totalRealized += realized;
 
-          return {
-            sector,
-            monthlyData,
-            totalGoal,
-            totalRealized,
-            totalGap: totalRealized - totalGoal
-          };
-        });
+                return { month, goal, realized, gap };
+              });
 
-        return processedData;
+              return {
+                sector,
+                monthlyData,
+                totalGoal,
+                totalRealized,
+                totalGap: totalRealized - totalGoal
+              };
+            });
+
+            return processedData;
+          })
+        );
+        
+        return data$;
       })
     );
   }

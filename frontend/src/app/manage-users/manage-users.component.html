@@ -11,6 +11,8 @@
         <th>Email</th>
         <th>Perfil Atual</th>
         <th>Novo Perfil</th>
+        <th>Setor Atual</th>
+        <th>Novo Setor</th>
         <th>Ação</th>
       </tr>
     </thead>
@@ -20,14 +22,26 @@
         <td>{{ user.email }}</td>
         <td>{{ user.profile }}</td>
         <td>
-          <select [(ngModel)]="selectedProfile[user.id]">
-            <option *ngFor="let profile of profiles" [value]="profile">{{ profile }}</option>
+        <select class="form-control" [(ngModel)]="selectedProfile[user.id]">
+            <option *ngFor="let profile of profiles" [ngValue]="profile">
+              {{ profile }}
+            </option>
+          </select>
+        </td>
+        <td>{{ user.sector?.name || 'Não definido' }}</td>
+        <td>
+          <select class="form-control" [(ngModel)]="selectedSectorId[user.id]">
+            <option [ngValue]="null">Nenhum</option>
+            <option *ngFor="let sector of availableSectors" [ngValue]="sector.id">{{ sector.name }}</option>
           </select>
         </td>
         <td>
-          <button (click)="updateProfile(user.id)" class="button-update">Salvar</button>
+          <button class="btn btn-primary" (click)="updateUser(user)">Salvar</button>
         </td>
       </tr>
     </tbody>
   </table>
+  <div *ngIf="users.length === 0 && !errorMessage">
+    <p>Nenhum usuário encontrado.</p>
+  </div>
 </div>

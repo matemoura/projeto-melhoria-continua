@@ -3,6 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../models/user.model';
 
+export interface UserUpdateRequest {
+  profile?: string;
+  setorId?: number | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -17,5 +22,9 @@ export class UserService {
 
   updateUserProfile(userId: number, profile: string): Observable<User> {
     return this.http.put<User>(`${this.apiUrl}/${userId}/profile`, { profile });
+  }
+
+  updateUser(userId: number, payload: UserUpdateRequest): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/${userId}`, payload);
   }
 }

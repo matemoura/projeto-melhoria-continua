@@ -26,7 +26,10 @@
 
     <div class="form-group">
       <label for="setor">Setor</label>
-      <input id="setor" type="text" formControlName="setor">
+      <select id="setor" formControlName="setor">
+        <option value="" disabled>Selecione um setor</option>
+        <option *ngFor="let setor of availableSectors" [value]="setor.id">{{ setor.name }}</option>
+      </select>
       <div *ngIf="ideaForm.get('setor')?.invalid && ideaForm.get('setor')?.touched" class="error-message">
         O setor é obrigatório.
       </div>
@@ -56,13 +59,11 @@
             type="checkbox"
             [value]="impact"
             (change)="onCheckboxChange($event)"
-            [checked]="ideaForm.value.impactos.includes(impact)"
-          />
+            [checked]="ideaForm.value.impacts.includes(impact)" />
           <span>{{ impact }}</span>
         </label>
       </div>
-      <div *ngIf="ideaForm.get('impactos')?.invalid && ideaForm.get('impactos')?.touched" class="error-message">
-        Selecione pelo menos um impacto.
+      <div *ngIf="ideaForm.get('impacts')?.invalid && ideaForm.get('impacts')?.touched" class="error-message"> Selecione pelo menos um impacto.
       </div>
     </fieldset>
 

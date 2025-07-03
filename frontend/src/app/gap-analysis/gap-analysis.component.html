@@ -19,7 +19,7 @@
     </div>
 
     <div class="form-check" *ngIf="isCurrentYear && hasSearched && !isLoading">
-      <input type="checkbox" id="filter-month" [(ngModel)]="filterUpToCurrentMonth" class="form-check-input">
+      <input type="checkbox" id="filter-month" [(ngModel)]="filterUpToCurrentMonth" (change)="onFilterChange()" class="form-check-input">
       <label for="filter-month">Mostrar somente até o mês atual</label>
     </div>
   </div>

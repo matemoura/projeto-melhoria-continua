@@ -1,7 +1,6 @@
 package com.mouramateus.melhoria_continua.controller;
 
 import com.mouramateus.melhoria_continua.dto.RegisterRequest;
-import com.mouramateus.melhoria_continua.entities.User;
 import com.mouramateus.melhoria_continua.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +17,17 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> register(@RequestBody RegisterRequest request) {
-        User registeredUser = authService.register(request);
-        Map<String, String> response = authService.login(request.getEmail(), request.getPassword());
+    public ResponseEntity<Map<String, Object>> register(@RequestBody RegisterRequest request) {
+        authService.register(request);
+        Map<String, Object> response = authService.login(request.getEmail(), request.getPassword());
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> credentials) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> credentials) {
         String email = credentials.get("email");
         String password = credentials.get("password");
-        Map<String, String> response = authService.login(email, password);
+        Map<String, Object> response = authService.login(email, password);
         return ResponseEntity.ok(response);
     }
 

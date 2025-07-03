@@ -2,12 +2,14 @@ package com.mouramateus.melhoria_continua.services;
 
 import com.mouramateus.melhoria_continua.config.JwtTokenUtil;
 import com.mouramateus.melhoria_continua.dto.RegisterRequest;
+import com.mouramateus.melhoria_continua.entities.Profile;
+import com.mouramateus.melhoria_continua.entities.Sector;
 import com.mouramateus.melhoria_continua.entities.User;
+import com.mouramateus.melhoria_continua.repositories.SectorRepository;
 import com.mouramateus.melhoria_continua.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,6 +32,10 @@ public class AuthService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private SectorRepository sectorRepository;
+
+
     public User register(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email já cadastrado");
@@ -39,13 +45,19 @@ public class AuthService {
                 request.getName(),
                 request.getEmail(),
                 passwordEncoder.encode(request.getPassword()),
-                "USER"
+                Profile.USER
         );
+        if (request.getSetorId() != null) {
+            Sector sector = sectorRepository.findById(request.getSetorId())
+                    .orElseThrow(() -> new RuntimeException("Setor não encontrado"));
+            user.setSector(sector);
+        }
+
 
         return userRepository.save(user);
     }
 
-    public Map<String, String> login(String email, String password) {
+    public Map<String, Object> login(String email, String password) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
@@ -53,18 +65,17 @@ public class AuthService {
             throw new RuntimeException("Senha incorreta");
         }
 
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                user.getEmail(), user.getPassword(),
-                java.util.List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getProfile()))
-        );
+        String token = jwtTokenUtil.generateToken(user);
 
-        String token = jwtTokenUtil.generateToken(userDetails);
-
-        Map<String, String> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         response.put("token", token);
         response.put("name", user.getName());
-        response.put("profile", user.getProfile());
+        response.put("profile", user.getProfile().name());
         response.put("id", user.getId().toString());
+
+        if (user.getSector() != null) {
+            response.put("setor", user.getSector());
+        }
 
         return response;
     }

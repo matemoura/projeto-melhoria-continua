@@ -2,6 +2,10 @@
   <div class="list-header">
     <h2>💡 Ideias Enviadas</h2>
     <p>Visualize todas as sugestões de melhoria registradas na plataforma.</p>
+
+    <div *ngIf="authService.hasAnyRole(['melhoria continua', 'admin']) && ideas.length > 0" class="export-container">
+      <button (click)="exportToExcel()" class="export-button">📥 Exportar para Excel</button>
+    </div>
   </div>
 
   <div class="search-container">
@@ -46,12 +50,16 @@
           <p>{{ idea.possiveisSolucoes }}</p>
         </div>
 
-        <div class="info-group" *ngIf="idea.impactos?.length">
-          <strong>Impactos:</strong>
-          <p class="impact-tags">
-            <span *ngFor="let impacto of idea.impactos" class="tag">{{ impacto }}</span>
-          </p>
+        <div class="info-group">
+        <strong>Impactos:</strong>
+        
+        <div class="impacts-container"> 
+          <span *ngFor="let impact of idea.impactos" class="impact-item">
+            {{ impact }}
+          </span>
         </div>
+        
+      </div>
 
         <div class="info-grid">
           <div class="info-group" *ngIf="idea.interferencia !== undefined">

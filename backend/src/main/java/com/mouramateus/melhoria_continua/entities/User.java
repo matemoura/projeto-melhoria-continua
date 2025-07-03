@@ -13,14 +13,21 @@ public class User {
     private String name;
     private String email;
     private String password;
-    private String profile;
+
+    @Enumerated(EnumType.STRING)
+    private Profile profile;
+
     private String resetToken;
     private LocalDateTime resetTokenExpiryDate;
+
+    @ManyToOne
+    @JoinColumn(name = "sector_id")
+    private Sector sector;
 
     public User() {
     }
 
-    public User(String name, String email, String password, String profile) {
+    public User(String name, String email, String password, Profile profile) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -59,14 +66,6 @@ public class User {
         this.password = password;
     }
 
-    public String getProfile() {
-        return profile;
-    }
-
-    public void setProfile(String profile) {
-        this.profile = profile;
-    }
-
     public String getResetToken() {
         return resetToken;
     }
@@ -81,5 +80,21 @@ public class User {
 
     public void setResetTokenExpiryDate(LocalDateTime resetTokenExpiryDate) {
         this.resetTokenExpiryDate = resetTokenExpiryDate;
+    }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
+
+    public Sector getSector() {
+        return sector;
+    }
+
+    public void setSector(Sector sector) {
+        this.sector = sector;
     }
 }

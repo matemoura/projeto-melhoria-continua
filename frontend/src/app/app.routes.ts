@@ -12,6 +12,7 @@ import { ManageGoalsComponent } from './manage-goals/manage-goals-component';
 import { ManageUsersComponent } from './manage-users/manage-users.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { ManageSectorsComponent } from './manage-sectors/manage-sectors.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -46,6 +47,12 @@ export const routes: Routes = [
     component: ManageUsersComponent,
     canActivate: [authGuard],
     data: { roles: ['admin'] }
+  },
+  {
+    path: 'manage-sectors',
+    component: ManageSectorsComponent,
+    canActivate: [authGuard],
+    data: { roles: ['admin', 'melhoria continua'] }
   },
   { path: '**', redirectTo: '/home' }
 ];

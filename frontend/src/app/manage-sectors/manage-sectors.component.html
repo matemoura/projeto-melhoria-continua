@@ -1,0 +1,29 @@
+<div class="manage-sectors-container">
+  <h2>Gerenciar Setores</h2>
+  <p>Crie e remova os setores que serão utilizados em toda a aplicação.</p>
+
+  <div *ngIf="message" class="alert" [ngClass]="{'alert-success': !isError, 'alert-danger': isError}">
+    {{ message }}
+  </div>
+
+  <div class="form-container">
+    <input type="text" [(ngModel)]="newSectorName" placeholder="Nome do novo setor">
+    <button (click)="createSector()">Criar Setor</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Nome do Setor</th>
+        <th>Ação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let sector of sectors">
+        <td>{{ sector.name }}</td>  <td>
+          <button (click)="deleteSector(sector.id)" class="delete-button">Excluir</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

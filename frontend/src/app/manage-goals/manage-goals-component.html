@@ -28,7 +28,7 @@
         <label for="sector">Setor</label>
         <select id="sector" [(ngModel)]="newGoal.sector" name="sector" required class="form-control">
           <option value="" disabled>Selecione um setor</option>
-          <option *ngFor="let sector of formSectors" [value]="sector">{{ sector }}</option>
+          <option *ngFor="let sector of formSectors" [value]="sector.name">{{ sector.name }}</option>
         </select>
       </div>
 

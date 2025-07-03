@@ -1,6 +1,5 @@
 package com.mouramateus.melhoria_continua.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mouramateus.melhoria_continua.dto.UpdateMoreIdeaDto;
 import com.mouramateus.melhoria_continua.dto.UpdateStatusRequest;
 import com.mouramateus.melhoria_continua.entities.MoreIdea;
@@ -21,9 +20,6 @@ public class MoreIdeasController {
 
     @Autowired
     private MoreIdeaService moreIdeaService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @GetMapping
     public ResponseEntity<List<MoreIdea>> getAllIdeas(
