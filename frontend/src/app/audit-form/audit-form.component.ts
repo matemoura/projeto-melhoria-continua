@@ -22,7 +22,7 @@ export class AuditFormComponent {
 
   constructor() {
     this.auditForm = this.fb.group({
-      auditor: ['', Validators.required],
+      auditor: [{ value: '', disabled: true }, Validators.required],
       auditedAreas: this.fb.array([]),
       auditDateTime: [new Date().toISOString(), Validators.required]
     });
@@ -31,6 +31,8 @@ export class AuditFormComponent {
     if (currentUser) {
       this.auditForm.patchValue({ auditor: currentUser.name });
     }
+    
+    this.addAuditedArea();
   }
 
   get auditedAreas(): FormArray {
@@ -38,19 +40,26 @@ export class AuditFormComponent {
   }
 
   addAuditedArea() {
-    this.auditedAreas.push(
-      this.fb.group({
+    const areaGroup = this.fb.group({
         nomeArea: ['', Validators.required],
-        seiri: [0, [Validators.required, Validators.min(0), Validators.max(10)]],
-        seiton: [0, [Validators.required, Validators.min(0), Validators.max(10)]],
-        seiso: [0, [Validators.required, Validators.min(0), Validators.max(10)]],
-        seiketsu: [0, [Validators.required, Validators.min(0), Validators.max(10)]],
-        shitsuke: [0, [Validators.required, Validators.min(0), Validators.max(10)]],
-        notaFinal: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
-        statusArea: ['PENDENTE'],
-        imagens: [[]]
+      seiri: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
+      seiton: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
+      seiso: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
+      seiketsu: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
+      shitsuke: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
+      notaFinal: [{value: 0, disabled: true}, [Validators.required, Validators.min(0), Validators.max(100)]],
+      statusArea: ['PENDENTE'],
+      imagens: [[]]
       })
-    );
+
+    areaGroup.valueChanges.subscribe(values => {
+    const { seiri, seiton, seiso, seiketsu, shitsuke } = values;
+    const total = (seiri || 0) + (seiton || 0) + (seiso || 0) + (seiketsu || 0) + (shitsuke || 0);
+    const media = total / 5;
+    areaGroup.get('notaFinal')?.setValue(parseFloat(media.toFixed(2)), { emitEvent: false });
+  });
+
+    this.auditedAreas.push(areaGroup);
   }
 
   onFileSelected(event: Event) {
@@ -62,7 +71,8 @@ export class AuditFormComponent {
 
   onSubmit() {
     if (this.auditForm.valid) {
-      const formValue = this.auditForm.value;
+      console.log('Formulário é válido. Enviando dados...');
+      const formValue = this.auditForm.getRawValue();
 
       formValue.auditedAreas = formValue.auditedAreas.map((area: any) => ({
         ...area,
@@ -79,7 +89,7 @@ export class AuditFormComponent {
       this.auditService.saveAudit(formData).subscribe({
         next: (response: any) => {
           alert('Auditoria enviada com sucesso!');
-          this.router.navigate(['/']);
+          this.resetForm();
         },
         error: (error: any) => {
           alert('Erro ao enviar auditoria.');
@@ -89,5 +99,17 @@ export class AuditFormComponent {
     } else {
       alert('Preencha todos os campos obrigatórios.');
     }
+  }
+
+  private resetForm(): void {
+    this.auditedAreas.clear();
+    this.auditForm.reset(); 
+    this.addAuditedArea(); 
+
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      this.auditForm.patchValue({ auditor: currentUser.name });
+    }
+    this.selectedFile = null;
   }
 }

@@ -1,0 +1,76 @@
+<div class="container">
+  <h2>Histórico de Auditorias</h2>
+  <p>Selecione uma área para ver todas as auditorias realizadas.</p>
+
+  <div *ngIf="loading" class="spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading">
+    <mat-list>
+      <mat-list-item
+        *ngFor="let area of areas"
+        (click)="loadAuditsForArea(area)"
+        [class.selected]="area === selectedArea"
+        class="area-item">
+        <div mat-line>{{ area }}</div>
+        <div mat-line class="subtext">Clique para ver o histórico</div>
+      </mat-list-item>
+    </mat-list>
+
+    <div *ngIf="selectedArea" class="history-container">
+      <h3>Histórico para: {{ selectedArea }}</h3>
+
+      <div *ngIf="loadingAudits" class="spinner-container">
+        <mat-spinner></mat-spinner>
+      </div>
+
+      <div *ngIf="!loadingAudits && auditHistory.length > 0" class="table-container">
+        <table mat-table [dataSource]="auditHistory" class="mat-elevation-z8">
+
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef>Data da Auditoria</th>
+            <td mat-cell *matCellDef="let audit">
+              {{ audit.auditDateTime | date:'dd/MM/yyyy HH:mm' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="score">
+            <th mat-header-cell *matHeaderCellDef>Pontuação Final</th>
+            <td mat-cell *matCellDef="let audit">
+              {{ audit.notaFinal | number:'1.1-2' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Ações</th>
+            <td mat-cell *matCellDef="let audit" class="actions-cell">
+              <button
+                mat-icon-button
+                matTooltip="Ver Detalhes"
+                (click)="openDetails(audit)">
+                <mat-icon>visibility</mat-icon>
+              </button>
+
+              <button
+                mat-icon-button
+                matTooltip="Baixar Evidência"
+                [matTooltipDisabled]="!audit.imageUrl"
+                (click)="downloadEvidence(audit)"
+                [disabled]="!audit.imageUrl">
+                <mat-icon>download</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['date', 'score', 'actions']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['date', 'score', 'actions'];"></tr>
+        </table>
+      </div>
+
+      <p *ngIf="!loadingAudits && auditHistory.length === 0" class="empty-message">
+        Nenhuma auditoria encontrada para esta área.
+      </p>
+    </div>
+  </div>
+</div>

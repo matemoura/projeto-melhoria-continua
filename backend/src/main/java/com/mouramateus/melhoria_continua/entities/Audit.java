@@ -1,5 +1,6 @@
 package com.mouramateus.melhoria_continua.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,8 +14,8 @@ public class Audit {
     private LocalDateTime auditDateTime;
     private String imageUrl;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "audit_id")
+    @OneToMany(mappedBy = "audit", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<AuditedArea> auditedAreas;
 
     public Audit() {

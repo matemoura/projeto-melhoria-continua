@@ -13,6 +13,7 @@ import { ManageUsersComponent } from './manage-users/manage-users.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { ManageSectorsComponent } from './manage-sectors/manage-sectors.component';
+import { AuditHistoryComponent } from './audit-history/audit-history.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -42,6 +43,12 @@ export const routes: Routes = [
     data: { roles: ['comitê do 5S', 'melhoria continua', 'admin'] }
   },
   { path: 'audit/ranking', component: AuditRankingComponent },
+  {
+    path: 'audit/history',
+    component: AuditHistoryComponent,
+    canActivate: [authGuard],
+    data: { roles: ['ADMIN', 'MELHORIA_CONTINUA', 'COMITE_5S'] }
+  },
   {
     path: 'manage-users',
     component: ManageUsersComponent,

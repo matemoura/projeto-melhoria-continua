@@ -1,0 +1,16 @@
+.evidence-image-container {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.evidence-image {
+    max-width: 100%;
+    max-height: 400px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+mat-list-item {
+    font-size: 1rem;
+}

@@ -1,11 +1,19 @@
 <h2>🏆 Ranking das Auditorias 5S</h2>
 
-<div class="button-group">
-  <button [class.active]="tipoRanking === 'total'" (click)="onTipoRankingChange('total')">
-    Ver Ranking Total
-  </button>
-  <button [class.active]="tipoRanking === 'latest'" (click)="onTipoRankingChange('latest')">
-    Ver Última Auditoria
+<div class="controls-container">
+  <div class="button-group">
+    <button [class.active]="tipoRanking === 'total'" (click)="onTipoRankingChange('total')">
+      Ver Ranking Total
+    </button>
+    <button [class.active]="tipoRanking === 'latest'" (click)="onTipoRankingChange('latest')">
+      Ver Última Auditoria
+    </button>
+  </div>
+  <button 
+    *ngIf="authService.hasAnyRole(['ADMIN', 'MELHORIA_CONTINUA', 'COMITE_5S']) && ranking.length > 0"
+    (click)="exportToExcel()" 
+    class="export-button">
+    📥 Exportar para Excel
   </button>
 </div>
 
@@ -15,10 +23,62 @@
   Nenhum ranking disponível.
 </div>
 
-<ul *ngIf="!loading && ranking.length > 0" class="ranking-list">
-  <li *ngFor="let area of ranking; index as i">
-    <span class="position">{{ i + 1 }}º</span>
-    <span class="area">{{ area.nomeArea }}</span>
-    <span class="score">{{ area.pontuacao }} pontos</span>
-  </li>
-</ul>
+<div class="content-layout" *ngIf="!loading && ranking.length > 0">
+  <div class="chart-container">
+    <h3>Visualização Gráfica</h3>
+    <canvas #rankingChart></canvas>
+  </div>
+
+  <div class="ranking-container">
+    <h3>Ranking Detalhado</h3>
+    <ul class="ranking-list">
+      <li *ngFor="let area of ranking; index as i" 
+          (click)="selectArea(area.nomeArea)" 
+          [class.selectable]="tipoRanking === 'total'">
+        <span class="position">{{ i + 1 }}º</span>
+        <span class="area">{{ area.nomeArea }}</span>
+        <span class="score">{{ area.pontuacao | number:'1.1-2' }} pontos</span>
+      </li>
+    </ul>
+
+    <div *ngIf="selectedArea" class="history-details">
+      <h4>Histórico para: {{ selectedArea }}</h4>
+      <div *ngIf="loadingHistory" class="spinner">Carregando histórico...</div>
+      
+      <ul *ngIf="!loadingHistory" class="history-list">
+        <li *ngFor="let audit of areaHistory" (click)="viewAuditDetails(audit)">
+          Auditoria de {{ audit.auditDateTime | date:'dd/MM/yyyy' }}
+          <span>{{ audit.notaFinal | number:'1.1-2' }} pontos &rarr;</span>
+        </li>
+      </ul>
+      
+      <div *ngIf="!loadingHistory && areaHistory.length === 0" class="empty-message">
+        Nenhuma auditoria encontrada para esta área.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="selectedAudit" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="close-button" (click)="closeModal()">×</button>
+    <h3>Detalhes da Auditoria - {{ selectedAudit?.nomeArea }}</h3>
+    <p><strong>Data:</strong> {{ selectedAudit?.auditDateTime | date:'dd/MM/yyyy HH:mm' }}</p>
+    <p><strong>Auditor:</strong> {{ selectedAudit?.auditor }}</p>
+    
+    <ul class="score-details">
+      <li><strong>Seiri (Utilização):</strong> {{ selectedAudit?.seiri }}</li>
+      <li><strong>Seiton (Organização):</strong> {{ selectedAudit?.seiton }}</li>
+      <li><strong>Seisō (Limpeza):</strong> {{ selectedAudit?.seiso }}</li>
+      <li><strong>Seiketsu (Padronização):</strong> {{ selectedAudit?.seiketsu }}</li>
+      <li><strong>Shitsuke (Disciplina):</strong> {{ selectedAudit?.shitsuke }}</li>
+      <li class="total-score"><strong>Nota Final:</strong> {{ selectedAudit?.notaFinal }}</li>
+    </ul>
+
+    <div *ngIf="selectedAudit?.imageUrl" class="image-section">
+        <h4>Evidência Fotográfica</h4>
+        <img [src]="'http://localhost:8080' + selectedAudit.imageUrl" alt="Imagem da auditoria">
+        <a [href]="'http://localhost:8080' + selectedAudit.imageUrl" target="_blank" download class="button">Baixar Imagem</a>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,6 @@
 package com.mouramateus.melhoria_continua.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.mouramateus.melhoria_continua.enums.StatusArea;
 import jakarta.persistence.*;
 
@@ -9,17 +10,30 @@ public class AuditedArea {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nomeArea;
-    private Integer seiri;
-    private Integer seiton;
-    private Integer seiso;
-    private Integer seiketsu;
-    private Integer shitsuke;
-    private Integer notaFinal;
+    private Double seiri;
+    private Double seiton;
+    private Double seiso;
+    private Double seiketsu;
+    private Double shitsuke;
+    private Double notaFinal;
 
     @Enumerated(EnumType.STRING)
     private StatusArea statusArea;
 
     public AuditedArea() {
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "audit_id")
+    @JsonBackReference
+    private Audit audit;
+
+    public Audit getAudit() {
+        return audit;
+    }
+
+    public void setAudit(Audit audit) {
+        this.audit = audit;
     }
 
     public Long getId() {
@@ -38,51 +52,51 @@ public class AuditedArea {
         this.nomeArea = nomeArea;
     }
 
-    public Integer getSeiri() {
+    public Double getSeiri() {
         return seiri;
     }
 
-    public void setSeiri(Integer seiri) {
+    public void setSeiri(Double seiri) {
         this.seiri = seiri;
     }
 
-    public Integer getSeiton() {
+    public Double getSeiton() {
         return seiton;
     }
 
-    public void setSeiton(Integer seiton) {
+    public void setSeiton(Double seiton) {
         this.seiton = seiton;
     }
 
-    public Integer getSeiso() {
+    public Double getSeiso() {
         return seiso;
     }
 
-    public void setSeiso(Integer seiso) {
+    public void setSeiso(Double seiso) {
         this.seiso = seiso;
     }
 
-    public Integer getSeiketsu() {
+    public Double getSeiketsu() {
         return seiketsu;
     }
 
-    public void setSeiketsu(Integer seiketsu) {
+    public void setSeiketsu(Double seiketsu) {
         this.seiketsu = seiketsu;
     }
 
-    public Integer getShitsuke() {
+    public Double getShitsuke() {
         return shitsuke;
     }
 
-    public void setShitsuke(Integer shitsuke) {
+    public void setShitsuke(Double shitsuke) {
         this.shitsuke = shitsuke;
     }
 
-    public Integer getNotaFinal() {
+    public Double getNotaFinal() {
         return notaFinal;
     }
 
-    public void setNotaFinal(Integer notaFinal) {
+    public void setNotaFinal(Double notaFinal) {
         this.notaFinal = notaFinal;
     }
 

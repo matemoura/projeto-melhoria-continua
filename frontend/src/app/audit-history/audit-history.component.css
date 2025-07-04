@@ -1,0 +1,121 @@
+:host {
+  display: block;
+}
+
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Roboto', sans-serif;
+}
+
+h2 {
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+p {
+  color: #4b5563;
+  margin-bottom: 2rem;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+}
+
+.area-item {
+  transition: background-color 0.3s ease, border-left-color 0.3s ease;
+  border-radius: 8px;
+  margin-bottom: 8px !important;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+}
+
+.area-item:hover {
+  background-color: #f9fafb;
+}
+
+.area-item.selected {
+  background-color: #eef2ff;
+  border-left: 4px solid #4f46e5;
+  font-weight: 600;
+}
+
+.area-item.selected .mat-line {
+  color: #312e81;
+}
+
+.subtext {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.history-container {
+  margin-top: 2.5rem;
+}
+
+.table-container {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.mat-table {
+  width: 100%;
+}
+
+:host ::ng-deep .mat-row {
+  height: 64px; 
+}
+
+:host ::ng-deep .mat-cell,
+:host ::ng-deep .mat-header-cell {
+  vertical-align: middle;
+}
+
+:host ::ng-deep .mat-column-actions {
+  width: 120px;
+  text-align: center;
+}
+
+:host ::ng-deep .actions-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+:host ::ng-deep .mat-mdc-icon-button .mat-mdc-button-persistent-ripple,
+:host ::ng-deep .mat-mdc-icon-button .mat-ripple-element {
+  display: none !important;
+}
+
+:host ::ng-deep .actions-cell .mat-icon-button {
+  background-color: transparent !important;
+}
+
+:host ::ng-deep .actions-cell mat-icon {
+  color: #6b7280;
+  transition: color 0.2s ease-in-out;
+}
+
+:host ::ng-deep .actions-cell button:not(:disabled):hover mat-icon {
+  color: #3f51b5;
+}
+
+:host ::ng-deep .actions-cell button:disabled mat-icon {
+  color: #d1d5db;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+  background-color: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  margin-top: 1rem;
+}

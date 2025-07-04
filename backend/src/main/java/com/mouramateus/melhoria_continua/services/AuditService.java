@@ -39,15 +39,20 @@ public class AuditService {
             Files.copy(imageFile.getInputStream(), uploadPath.resolve(fileName));
             audit.setImageUrl("/uploads/audits/" + fileName);
         }
+        if (audit.getAuditedAreas() != null) {
+            for (AuditedArea area : audit.getAuditedAreas()) {
+                area.setAudit(audit);
+            }
+        }
         return auditRepository.save(audit);
     }
 
     public List<Map<String, Object>> getTotalRanking() {
-        Map<String, Integer> rankingMap = new HashMap<>();
+        Map<String, Double> rankingMap = new HashMap<>();
         List<AuditedArea> allAuditedAreas = auditedAreaRepository.findAll();
 
         for (AuditedArea area : allAuditedAreas) {
-            rankingMap.merge(area.getNomeArea(), area.getNotaFinal(), Integer::sum);
+            rankingMap.merge(area.getNomeArea(), area.getNotaFinal(), Double::sum);
         }
 
         return rankingMap.entrySet().stream()
@@ -57,27 +62,58 @@ public class AuditService {
                     item.put("pontuacao", entry.getValue());
                     return item;
                 })
-                .sorted((a1, a2) -> ((Integer)a2.get("pontuacao")).compareTo((Integer)a1.get("pontuacao")))
+                .sorted((a1, a2) -> ((Double)a2.get("pontuacao")).compareTo((Double)a1.get("pontuacao")))
                 .collect(Collectors.toList());
     }
 
     public List<Map<String, Object>> getLatestAuditRanking() {
-        Audit latestAudit = auditRepository.findAll().stream()
-                .max((a1, a2) -> a1.getAuditDateTime().compareTo(a2.getAuditDateTime()))
-                .orElse(null);
+        Map<String, AuditedArea> latestAreaAudits = auditedAreaRepository.findAll().stream()
+                .collect(Collectors.toMap(
+                        AuditedArea::getNomeArea,
+                        area -> area,
+                        (existing, replacement) ->
+                                existing.getAudit().getAuditDateTime().isAfter(replacement.getAudit().getAuditDateTime()) ? existing : replacement
+                ));
 
-        if (latestAudit == null) {
-            return List.of();
-        }
-
-        return latestAudit.getAuditedAreas().stream()
+        return latestAreaAudits.values().stream()
                 .map(area -> {
                     Map<String, Object> item = new HashMap<>();
                     item.put("nomeArea", area.getNomeArea());
                     item.put("pontuacao", area.getNotaFinal());
                     return item;
                 })
-                .sorted((a1, a2) -> ((Integer)a2.get("pontuacao")).compareTo((Integer)a1.get("pontuacao")))
+                .sorted((a1, a2) -> ((Double)a2.get("pontuacao")).compareTo((Double)a1.get("pontuacao")))
                 .collect(Collectors.toList());
+    }
+
+    public List<Map<String, Object>> getHistoryByArea(String areaName) {
+        List<AuditedArea> areas = auditedAreaRepository.findByNomeAreaOrderByAudit_AuditDateTimeDesc(areaName);
+
+        return areas.stream().map(area -> {
+            Map<String, Object> historyItem = new HashMap<>();
+            historyItem.put("id", area.getId());
+            historyItem.put("nomeArea", area.getNomeArea());
+            historyItem.put("notaFinal", area.getNotaFinal());
+            historyItem.put("seiri", area.getSeiri());
+            historyItem.put("seiton", area.getSeiton());
+            historyItem.put("seiso", area.getSeiso());
+            historyItem.put("seiketsu", area.getSeiketsu());
+            historyItem.put("shitsuke", area.getShitsuke());
+
+            if (area.getAudit() != null) {
+                historyItem.put("auditDateTime", area.getAudit().getAuditDateTime());
+                historyItem.put("auditor", area.getAudit().getAuditor());
+                historyItem.put("imageUrl", area.getAudit().getImageUrl());
+            }
+            return historyItem;
+        }).collect(Collectors.toList());
+    }
+
+    public List<String> getDistinctAuditedAreas() {
+        return auditRepository.findDistinctAreaNames();
+    }
+
+    public List<Audit> findByAreaName(String area) {
+        return auditRepository.findByAuditedAreasNomeArea(area);
     }
 }

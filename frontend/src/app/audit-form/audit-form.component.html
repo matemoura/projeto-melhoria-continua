@@ -12,7 +12,7 @@
 
     <div formArrayName="auditedAreas">
       <h4>Áreas Auditadas</h4>
-      <div *ngFor="let area of auditedAreas.controls; let i = index">
+      <div *ngFor="let area of auditedAreas.controls; let i = index" [formGroupName]="i">
         <fieldset class="area-auditada">
           <legend>Área {{ i + 1 }}</legend>
 
@@ -24,23 +24,23 @@
           <div class="fields-grid">
             <div class="form-group">
               <label for="seiri-{{i}}">Seiri (Utilização)</label>
-              <input id="seiri-{{i}}" formControlName="seiri" type="number" min="0" max="10">
+              <input id="seiri-{{i}}" formControlName="seiri" type="number" min="0" max="100">
             </div>
             <div class="form-group">
               <label for="seiton-{{i}}">Seiton (Organização)</label>
-              <input id="seiton-{{i}}" formControlName="seiton" type="number" min="0" max="10">
+              <input id="seiton-{{i}}" formControlName="seiton" type="number" min="0" max="100">
             </div>
             <div class="form-group">
               <label for="seiso-{{i}}">Seisō (Limpeza)</label>
-              <input id="seiso-{{i}}" formControlName="seiso" type="number" min="0" max="10">
+              <input id="seiso-{{i}}" formControlName="seiso" type="number" min="0" max="100">
             </div>
             <div class="form-group">
               <label for="seiketsu-{{i}}">Seiketsu (Padronização)</label>
-              <input id="seiketsu-{{i}}" formControlName="seiketsu" type="number" min="0" max="10">
+              <input id="seiketsu-{{i}}" formControlName="seiketsu" type="number" min="0" max="100">
             </div>
             <div class="form-group">
               <label for="shitsuke-{{i}}">Shitsuke (Disciplina)</label>
-              <input id="shitsuke-{{i}}" formControlName="shitsuke" type="number" min="0" max="10">
+              <input id="shitsuke-{{i}}" formControlName="shitsuke" type="number" min="0" max="100">
             </div>
             <div class="form-group">
                 <label for="notaFinal-{{i}}">Pontuação Final</label>
@@ -62,6 +62,7 @@
 
     <input type="hidden" formControlName="auditDateTime">
 
-    <button type="submit" [disabled]="!auditForm.valid" class="button button-submit">Enviar Auditoria</button>
+    <button type="button" [disabled]="!auditForm.valid" (click)="onSubmit()" class="button button-submit">
+      Enviar Auditoria
+    </button>
   </form>
-</div>

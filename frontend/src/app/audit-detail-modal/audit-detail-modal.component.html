@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Detalhes da Auditoria</h2>
+<mat-dialog-content>
+  <div *ngIf="audit">
+    <p><strong>Área:</strong> {{ audit.nomeArea || 'N/A' }}</p>
+    <p><strong>Data e Hora:</strong> {{ audit.auditDateTime | date:'dd/MM/yyyy HH:mm' }}</p>
+    <p><strong>Pontuação Final:</strong> {{ audit.notaFinal }}</p>
+    <hr>
+    <h4>Pontuação por Senso</h4>
+    <mat-list role="list">
+        <mat-list-item role="listitem"><strong>Seiri (Utilização):</strong> {{ audit.seiri }}</mat-list-item>
+        <mat-list-item role="listitem"><strong>Seiton (Organização):</strong> {{ audit.seiton }}</mat-list-item>
+        <mat-list-item role="listitem"><strong>Seiso (Limpeza):</strong> {{ audit.seiso }}</mat-list-item>
+        <mat-list-item role="listitem"><strong>Seiketsu (Padronização):</strong> {{ audit.seiketsu }}</mat-list-item>
+        <mat-list-item role="listitem"><strong>Shitsuke (Disciplina):</strong> {{ audit.shitsuke }}</mat-list-item>
+    </mat-list>
+    <hr>
+    <h4>Evidência</h4>
+    <div class="evidence-image-container">
+        <img [src]="imageUrl" alt="Evidência da Auditoria" class="evidence-image">
+    </div>
+
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Fechar</button>
+</mat-dialog-actions>
