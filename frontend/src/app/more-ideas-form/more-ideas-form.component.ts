@@ -32,7 +32,7 @@ export class MoreIdeasFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private moreIdeasService: MoreIdeasService,
-    private authService: AuthService,
+    public authService: AuthService,
     private sectorService: SectorService
   ) {}
 
@@ -42,9 +42,12 @@ export class MoreIdeasFormComponent implements OnInit {
   }
 
   private initializeForm(): void {
+    const currentUser = this.authService.getCurrentUser();
+    const isLoggedIn = !!currentUser;
+
     this.ideaForm = this.fb.group({
-      nomeUsuario: [{ value: '', disabled: true }, Validators.required],
-      emailUsuario: [{ value: '', disabled: true }, [Validators.required, Validators.email]],
+      nomeUsuario: [{ value: '', disabled: isLoggedIn }, Validators.required],
+      emailUsuario: [{ value: '', disabled: isLoggedIn }, [Validators.required, Validators.email]],
       setor: ['', Validators.required],
       descricaoProblema: ['', Validators.required],
       possiveisSolucoes: ['', Validators.required],
@@ -53,6 +56,10 @@ export class MoreIdeasFormComponent implements OnInit {
       expectativaMelhoria: [null, [Validators.required, Validators.min(0), Validators.max(10)]],
       nomeKaizen: ['']
     });
+
+    if (isLoggedIn) {
+        this.ideaForm.get('setor')?.disable();
+    }
   }
 
   private loadSectors(): void {
@@ -70,7 +77,6 @@ export class MoreIdeasFormComponent implements OnInit {
         emailUsuario: currentUser.email,
         setor: currentUser.setor?.id
       });
-      this.ideaForm.get('setor')?.disable();
     }
   }
 
@@ -144,8 +150,18 @@ export class MoreIdeasFormComponent implements OnInit {
   }
 
   private resetForm(): void {
-    this.ideaForm.reset();
+    this.ideaForm.reset({
+        nomeUsuario: { value: '', disabled: this.authService.isAuthenticated() },
+        emailUsuario: { value: '', disabled: this.authService.isAuthenticated() },
+        setor: '',
+        descricaoProblema: '',
+        possiveisSolucoes: '',
+        interferencia: null,
+        expectativaMelhoria: null,
+        nomeKaizen: ''
+    });
     this.ideaForm.setControl('impacts', this.fb.array([], Validators.required));
+    
     this.fillUserData();
 
     this.selectedFile = null;

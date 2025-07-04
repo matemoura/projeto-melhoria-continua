@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuditService } from '../services/audit.service';
 import { CommonModule } from '@angular/common';
-import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,14 +9,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { AuditDetailModalComponent } from '../audit-detail-modal/audit-detail-modal.component';
 import { AuditHistoryEntry } from '../models/audit-history-entry.model';
-
+import { MatCardModule } from '@angular/material/card'; 
+import { MatListModule } from '@angular/material/list'; 
 
 @Component({
   selector: 'app-audit-history',
   standalone: true,
   imports: [
     CommonModule,
-    MatListModule,
+    MatCardModule, 
     MatProgressSpinnerModule,
     MatTableModule,
     MatIconModule,

@@ -2,6 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GapAnalysisService, GapData } from '../services/gap-analysis.service';
+import { AuthService } from '../services/auth.service';
+import * as XLSX from 'xlsx';
 
 interface MonthDisplay {
   id: number;
@@ -18,6 +20,7 @@ interface MonthDisplay {
 export class GapAnalysisComponent implements OnInit {
 
   private gapAnalysisService = inject(GapAnalysisService);
+  public authService = inject(AuthService);
 
   isLoading = false;
   errorMessage = '';
@@ -60,7 +63,7 @@ export class GapAnalysisComponent implements OnInit {
 
     this.gapAnalysisService.getGapAnalysisData(this.searchYear).subscribe({
       next: (data) => {
-        this.originalGapData = JSON.parse(JSON.stringify(data)); // Cópia profunda dos dados
+        this.originalGapData = JSON.parse(JSON.stringify(data));
         this.updateGapDataTotals();
         this.isLoading = false;
       },
@@ -94,5 +97,41 @@ export class GapAnalysisComponent implements OnInit {
         totalGap: totalRealized - totalGoal
       };
     });
+  }
+
+  exportToExcel(): void {
+    const monthsToExport = (this.isCurrentYear && this.filterUpToCurrentMonth)
+      ? this.allMonths.slice(0, this.currentMonth)
+      : this.allMonths;
+
+    const dataToExport = this.originalGapData.map(sectorData => {
+      const row: { [key: string]: any } = {
+        'Setor': sectorData.sector,
+      };
+
+      monthsToExport.forEach(month => {
+        const monthData = sectorData.monthlyData.find(md => md.month === month.id);
+        row[`${month.name} - Meta`] = monthData?.goal ?? 0;
+        row[`${month.name} - Realizado`] = monthData?.realized ?? 0;
+        row[`${month.name} - GAP`] = monthData?.gap ?? 0;
+      });
+      
+      const monthlyDataToSum = (this.isCurrentYear && this.filterUpToCurrentMonth)
+            ? sectorData.monthlyData.slice(0, this.currentMonth)
+            : sectorData.monthlyData;
+        
+      const totalGoal = monthlyDataToSum.reduce((acc, month) => acc + month.goal, 0);
+      const totalRealized = monthlyDataToSum.reduce((acc, month) => acc + month.realized, 0);
+
+      row['Total - Meta'] = totalGoal;
+      row['Total - Realizado'] = totalRealized;
+      row['Total - GAP'] = totalRealized - totalGoal;
+
+      return row;
+    });
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+    XLSX.writeFile(workbook, `analise_gap_${this.searchYear}.xlsx`);
   }
 }

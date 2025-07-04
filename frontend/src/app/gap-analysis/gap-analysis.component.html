@@ -22,6 +22,12 @@
       <input type="checkbox" id="filter-month" [(ngModel)]="filterUpToCurrentMonth" (change)="onFilterChange()" class="form-check-input">
       <label for="filter-month">Mostrar somente até o mês atual</label>
     </div>
+
+    <div class="export-container" *ngIf="authService.hasAnyRole(['ADMIN', 'MELHORIA_CONTINUA']) && hasSearched && !isLoading && gapData.length > 0">
+      <button (click)="exportToExcel()" class="button export-button">
+        📥 Exportar para Excel
+      </button>
+    </div>
   </div>
 
   <div *ngIf="isLoading" class="loading-message">Carregando dados...</div>

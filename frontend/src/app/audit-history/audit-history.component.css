@@ -9,9 +9,21 @@
   font-family: 'Roboto', sans-serif;
 }
 
-h2 {
+.page-title {
   color: #1f2937;
   margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.page-title mat-icon {
+  font-size: 1.5em;
+  height: 1.5em;
+  width: 1.5em;
+  vertical-align: middle;
 }
 
 p {
@@ -26,32 +38,64 @@ p {
   padding: 3rem;
 }
 
-.area-item {
-  transition: background-color 0.3s ease, border-left-color 0.3s ease;
-  border-radius: 8px;
-  margin-bottom: 8px !important;
-  border: 1px solid #e5e7eb;
+/* --- NOVOS ESTILOS PARA OS CARDS --- */
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.area-card {
   cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  border: 1px solid #e5e7eb;
 }
 
-.area-item:hover {
-  background-color: #f9fafb;
+.area-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-.area-item.selected {
+.area-card.selected {
+  border-color: #4f46e5;
   background-color: #eef2ff;
-  border-left: 4px solid #4f46e5;
-  font-weight: 600;
 }
 
-.area-item.selected .mat-line {
+:host ::ng-deep .area-card .mat-mdc-card-header-text {
+  margin: 0 16px;
+}
+
+:host ::ng-deep .area-card .mdc-card__primary-action:focus {
+  outline: none;
+}
+
+.area-card mat-icon[mat-card-avatar] {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: #6366f1;
+}
+
+.area-card.selected mat-icon[mat-card-avatar] {
+  color: #4f46e5;
+}
+
+.area-card mat-card-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.area-card.selected mat-card-title {
   color: #312e81;
 }
 
-.subtext {
-  font-size: 0.875rem;
-  color: #6b7280;
+.area-card mat-card-subtitle {
+  font-size: 0.9rem;
+  color: #64748b;
 }
+/* --- FIM DOS NOVOS ESTILOS --- */
+
 
 .history-container {
   margin-top: 2.5rem;
@@ -76,6 +120,11 @@ p {
   vertical-align: middle;
 }
 
+.mat-header-cell mat-icon {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
 :host ::ng-deep .mat-column-actions {
   width: 120px;
   text-align: center;
@@ -88,28 +137,6 @@ p {
   gap: 8px;
 }
 
-:host ::ng-deep .mat-mdc-icon-button .mat-mdc-button-persistent-ripple,
-:host ::ng-deep .mat-mdc-icon-button .mat-ripple-element {
-  display: none !important;
-}
-
-:host ::ng-deep .actions-cell .mat-icon-button {
-  background-color: transparent !important;
-}
-
-:host ::ng-deep .actions-cell mat-icon {
-  color: #6b7280;
-  transition: color 0.2s ease-in-out;
-}
-
-:host ::ng-deep .actions-cell button:not(:disabled):hover mat-icon {
-  color: #3f51b5;
-}
-
-:host ::ng-deep .actions-cell button:disabled mat-icon {
-  color: #d1d5db;
-}
-
 .empty-message {
   text-align: center;
   padding: 2rem;
@@ -118,4 +145,21 @@ p {
   border: 1px dashed #d1d5db;
   border-radius: 8px;
   margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.empty-message mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #9ca3af;
+}
+
+.empty-message p {
+    margin: 0;
+    font-size: 1.1rem;
 }

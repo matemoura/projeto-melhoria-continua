@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core'; 
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
+import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { Sector } from '../models/sector.model';
 
@@ -34,6 +35,7 @@ export interface CurrentUser {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
+  private router = inject(Router); // <-- ADICIONE ESTA LINHA
   private readonly API_BASE_URL = 'http://localhost:8080/api';
   private readonly LOGIN_URL = `${this.API_BASE_URL}/auth/login`;
   private readonly REGISTER_URL = `${this.API_BASE_URL}/auth/register`;
@@ -120,10 +122,29 @@ export class AuthService {
     localStorage.removeItem(this.sectorKey);
     this._isLoggedIn$.next(false);
     this._userProfile$.next(null);
+    this.router.navigate(['/']);
   }
 
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    if (!token) {
+      return false;
+    }
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const isExpired = Date.now() >= payload.exp * 1000;
+
+      if (isExpired) {
+        this.logout();
+        return false;
+      }
+
+      return true;
+    } catch (e) {
+      this.logout();
+      return false;
+    }
   }
 
   hasRole(role: string): boolean {
